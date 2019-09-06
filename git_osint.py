@@ -33,6 +33,9 @@ def parse_arguments():
     target_group.add_argument('-i', '--infile', type=str, action='store',
                               help='Input file with one URL per line')
 
+    parser.add_argument('-l', '--logfile', type=str, action='store',
+                        help='Will APPEND found items to specified file.')
+
     args = parser.parse_args()
 
     # Process the input file if provided. Return a list of targets.
@@ -45,6 +48,25 @@ def parse_arguments():
                 args.targets = [target.strip() for target in infile]
     else:
         args.targets = args.url
+
+    # Ensure log file is writeable
+    if args.logfile:
+        if os.path.isdir(args.logfile):
+            print("[!] Can't specify a directory as the logfile, exiting.")
+            sys.exit()
+        if os.path.isfile(args.logfile):
+            target = args.logfile
+        else:
+            target = os.path.dirname(args.logfile)
+            if target == '':
+                target = '.'
+
+        if not os.access(target, os.W_OK):
+            print("[!] Cannot write to log file, exiting")
+            sys.exit()
+
+        # Set the global in the utils file, where logging needs to happen
+        utils.init_log(args.logfile)
 
     return args
 

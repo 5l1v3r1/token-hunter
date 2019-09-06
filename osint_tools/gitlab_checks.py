@@ -2,6 +2,9 @@
 GitLab specific checks for GitOSINT
 """
 
+import re
+import requests
+
 def get_project_members(target):
     """
     Returns a list of all members in a project
