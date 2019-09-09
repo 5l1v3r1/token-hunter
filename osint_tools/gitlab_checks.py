@@ -55,11 +55,20 @@ def get_group_members(group):
 
     return members
 
-def get_personal_projects(members):
+def get_personal_projects(member):
     """
-    Returns a list of all personal projects for a list of members
+    Returns a list of all personal projects for a member
     """
-    return
+    details = api_get('{}/users/{}/projects'.format(API, member))
+    project_urls = []
+
+    if not details:
+        pass
+
+    for item in details:
+        project_urls.append(item['web_url'])
+
+    return project_urls
 
 def process_project(target):
     """
@@ -83,7 +92,15 @@ def process_groups(groups):
             continue
 
         members = get_group_members(group)
+        l.info("  MEMBERS:")
+        for member in members:
+            l.info("    %s", member)
+        #group_projects = get_group_projects(group)
 
-        group_projects.update(get_group_projects(group))
-        personal_projects.update(get_personal_projects(members))
+        for member in members:
+            personal_projects.update(get_personal_projects(member))
+
+        l.info("  PERSONAL PROJECTS:")
+        for link in personal_projects:
+            l.info("    %s", link)
 
