@@ -4,33 +4,9 @@ Generic utilities for GitOSINT.
 
 import urllib
 import datetime
+import logging
 import requests
 
-
-LOGFILE = False
-
-def init_log(logfile):
-    """
-    Initialize logging, if enabled by the user
-    """
-    if logfile:
-        global LOGFILE
-        LOGFILE = logfile
-
-        now = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        with open(logfile, 'a') as log_writer:
-            log_writer.write("\n\n#### GIT_OSINT {} ####\n"
-                             .format(now))
-
-def printl(text):
-    """
-    Prints to console and also to a logfile, if enabled
-    """
-    print(text)
-
-    if LOGFILE:
-        with open(LOGFILE, 'a')  as log_writer:
-            log_writer.write(text.lstrip())
 
 def parse_targets(targets):
     """

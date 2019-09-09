@@ -9,7 +9,16 @@ def get_project_members(target):
     """
     Returns a list of all members in a project
     """
-    return
+    members_page = target + '/-/group_members'
+    print("[*] Scraping {} for members".format(members_page))
+
+    response = requests.get(members_page)
+
+    regex = re.compile(r'js-last-button.*?page=(.*?)"')
+    members = re.findall(regex, response.text)
+
+    print(members)
+    return members
 
 def get_personal_projects(members):
     """
