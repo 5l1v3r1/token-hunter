@@ -55,18 +55,19 @@ def check_env(args):
     """
     Check for environment variables
     """
-    success = True
-
     if args.group or args.project:
         if not os.getenv('GITLAB_API'):
-            l.error("[!] You must set the GITLAB_API environment variable.")
-            success = False
+            l.warning("[!] GITLAB_API environment variable is not set. Only"
+                      " public information will be retrieved.")
+        else:
+            l.info("[*] GITLAB_API is configured and will be used.")
     if args.team or args.repo:
         if not os.getenv('GITHUB_API'):
-            l.error("[!] You must set the GITHUB_API environment variable.")
-            success = False
+            l.warning("[!] GITHUB_API environment variable is not set. Only"
+                      " public information will be retrieved.")
+        else:
+            l.info("[*] GITHUB_API is configured and will be used.")
 
-    return success
 
 def main():
     """
@@ -75,21 +76,20 @@ def main():
     args = parse_arguments()
 
     now = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    l.info("##### Git_OSINT started at {} ##### ".format(now))
+    l.info("##### Git_OSINT started at %s ##### ", now)
 
     # Verify we have environment variables set for expected APIs
-    if not check_env(args):
-        sys.exit()
+    check_env(args) 
 
     # Run the appropriate checks for each type
     if args.group:
-        gitlab_checks.process_group(args.group)
+        gitlab_checks.process_groups(args.group)
     if args.project:
-        gitlab_checks.process_project(args.project)
+        gitlab_checks.process_projects(args.project)
     if args.team:
-        github_checks.process_team(args.team)
+        github_checks.process_teams(args.team)
     if args.repo:
-        github_checks.process_repo(args.repo)
+        github_checks.process_repos(args.repo)
 
     print("[*] All done, good luck!")
 

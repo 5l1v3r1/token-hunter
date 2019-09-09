@@ -3,21 +3,56 @@ GitLab specific checks for GitOSINT
 """
 
 import re
+import os
+import logging as l
 import requests
 
-def get_project_members(target):
+
+API = 'https://gitlab.com/api/v4'
+API_KEY = None
+
+def api_get(url):
     """
-    Returns a list of all members in a project
+    Helper function to ensure API key is used if provided
     """
-    members_page = target + '/-/group_members'
-    print("[*] Scraping {} for members".format(members_page))
+    api_key = os.getenv('GITLAB_API')
 
-    response = requests.get(members_page)
+    if api_key:
+        headers = {'PRIVATE-TOKEN': api_key}
+    else:
+        headers = None
 
-    regex = re.compile(r'js-last-button.*?page=(.*?)"')
-    members = re.findall(regex, response.text)
+    response = requests.get(url, headers=headers)
 
-    print(members)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return False
+
+def get_group(group):
+    """
+    Validates access to a group via the API
+    """
+    details = api_get('{}/groups/{}'.format(API, group))
+
+    if not details:
+        return False
+    else:
+        l.info("GROUP: %s (%s)", details['name'], details['web_url'])
+        return True
+
+def get_group_members(group):
+    """
+    Returns a list of all members of a group
+    """
+    members = []
+    details = api_get('{}/groups/{}/members'.format(API, group))
+
+    # We should now have a list of dictionary items, need to parse through
+    # each one to extract the member info.
+    for item in details:
+        members.append(item['username'])
+
     return members
 
 def get_personal_projects(members):
@@ -32,10 +67,23 @@ def process_project(target):
     """
     return
 
-def process_group(target):
+def process_groups(groups):
     """
     Process a GitLab group
     """
-    members = get_project_members(target)
-    personal_projects = get_personal_projects(members)
+    # There might be a lot of duplicates when process subgroups and
+    # projects, so start some sets.
+    total_members = set()
+    group_projects = set()
+    personal_projects = set()
+
+    for group in groups:
+        if not get_group(group):
+            l.warning("[!] %s not found, skipping", group)
+            continue
+
+        members = get_group_members(group)
+
+        group_projects.update(get_group_projects(group))
+        personal_projects.update(get_personal_projects(members))
 
