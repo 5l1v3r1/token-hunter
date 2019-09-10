@@ -66,22 +66,23 @@ def api_get(url):
             # Return the collective retuls
             return all_results
 
-        else:
-            return response.json()
-    else:
-        return False
+        # Otherwise, return just the single result
+        return response.json()
+
+    # If code not 200, no results to process
+    return False
 
 def get_group(group):
     """
     Validates access to a group via the API
     """
     l.info("[*] Fetching group details for %s", group)
-    details = api_get('{}/groups/{}'.format(API, group))
+    group_details = api_get('{}/groups/{}'.format(API, group))
 
-    if not details:
+    if not group_details:
         return False
-    else:
-        return True
+
+    return group_details
 
 def get_group_members(group):
     """
@@ -133,7 +134,7 @@ def get_personal_projects(member):
 
     return project_urls
 
-def process_project(target):
+def process_projects(projects):
     """
     Process a GitLab project
     """
@@ -145,12 +146,11 @@ def process_groups(groups):
     """
     # There might be a lot of duplicates when process subgroups and
     # projects, so start some sets.
-    total_members = set()
-    group_projects = set()
     personal_projects = set()
 
     for group in groups:
-        if not get_group(group):
+        group_details = get_group(group)
+        if not group_details:
             l.warning("[!] %s not found, skipping", group)
             continue
 
@@ -161,7 +161,8 @@ def process_groups(groups):
         group_projects = get_group_projects(group)
 
         # Print / log all the gorey details
-        l.info("GROUP: %s (%s)", details['name'], details['web_url'])
+        l.info("GROUP: %s (%s)", group_details['name'],
+               group_details['web_url'])
 
         l.info("  GROUP PROJECTS:")
         for link in group_projects:
@@ -174,4 +175,3 @@ def process_groups(groups):
         l.info("  MEMBERS' PERSONAL PROJECTS:")
         for link in personal_projects:
             l.info("    %s", link)
-

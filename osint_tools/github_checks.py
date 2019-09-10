@@ -2,13 +2,13 @@
 GitHub specific checks for GitOSINT
 """
 
-def process_repo(target):
+def process_repos(target):
     """
     Process a Github repo
     """
     return
 
-def process_team(target):
+def process_teams(target):
     """
     Process a GitHub team
     """
