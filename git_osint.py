@@ -51,6 +51,15 @@ def parse_arguments():
 
     return args
 
+def get_time():
+    """
+    Returns formatted time in UTC
+    """
+    now = datetime.datetime.now(datetime.timezone.utc)
+    now_clean = now.strftime("%d/%m/%Y %H:%M:%S")
+    
+    return now_clean
+
 def check_env(args):
     """
     Check for environment variables
@@ -75,23 +84,25 @@ def main():
     """
     args = parse_arguments()
 
-    now = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    l.info("##### Git_OSINT started at %s ##### ", now)
+    l.info("##### Git_OSINT started at UTC %s ##### ", get_time())
 
     # Verify we have environment variables set for expected APIs
     check_env(args) 
 
     # Run the appropriate checks for each type
-    if args.group:
-        gitlab_checks.process_groups(args.group)
-    if args.project:
-        gitlab_checks.process_projects(args.project)
-    if args.team:
-        github_checks.process_teams(args.team)
-    if args.repo:
-        github_checks.process_repos(args.repo)
+    try:
+        if args.group:
+            gitlab_checks.process_groups(args.group)
+        if args.project:
+            gitlab_checks.process_projects(args.project)
+        if args.team:
+            github_checks.process_teams(args.team)
+        if args.repo:
+            github_checks.process_repos(args.repo)
+    except KeyboardInterrupt:
+        l.info("[!] Keyboard Interrupt, abandon ship!")
 
-    print("[*] All done, good luck!")
+    l.info("##### Git_OSINT finished at UTC %s ##### ", get_time())
 
 
 if __name__ == '__main__':

@@ -13,7 +13,12 @@ API_KEY = None
 
 def api_get(url):
     """
-    Helper function to ensure API key is used if provided
+    Helper function to interact with GitLab API using python requests
+
+    The important things here are:
+        - Adding the PRIVATE-TOKEN header if using an API key
+        - interacting with the pagination process via LINK headers
+          (https://docs.gitlab.com/ee/api/README.html#pagination)
     """
     api_key = os.getenv('GITLAB_API')
 
@@ -25,7 +30,38 @@ def api_get(url):
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        return response.json()
+        # The "Link" header is returned when there is more than one page of
+        # results. GitLab asks that we use this link instead of crafting
+        # our own.
+        if 'Link' in response.headers.keys():
+            # initialize a new variable to begin compounding multi-page
+            # results
+            all_results = response.json()
+            # Now, loop through until there is no 'next' link provided
+            pagenum = 1
+            while 'rel="next"' in response.headers['Link']:
+                # Using print instead of logging, we don't want the per-page
+                # status update in the log file
+                print("[*] Processing page {}\r".format(pagenum), end='')
+
+                regex = re.compile(r'<([^<>]*?)>; rel="next"')
+                next_url = re.findall(regex, response.headers['Link'])[0]
+
+                # Add the individual response to the collective
+                response = requests.get(next_url, headers=headers)
+                all_results += response.json()
+
+                pagenum += 1
+
+            # We need a line break if we've counted pages
+            if pagenum > 1:
+                print("")
+
+            # Return the collective retuls
+            return all_results
+
+        else:
+            return response.json()
     else:
         return False
 
@@ -33,12 +69,12 @@ def get_group(group):
     """
     Validates access to a group via the API
     """
+    l.info("[*] Fetching group details for %s", group)
     details = api_get('{}/groups/{}'.format(API, group))
 
     if not details:
         return False
     else:
-        l.info("GROUP: %s (%s)", details['name'], details['web_url'])
         return True
 
 def get_group_members(group):
@@ -46,6 +82,8 @@ def get_group_members(group):
     Returns a list of all members of a group
     """
     members = []
+
+    l.info("[*] Fetching group members for %s", group)
     details = api_get('{}/groups/{}/members'.format(API, group))
 
     # We should now have a list of dictionary items, need to parse through
@@ -59,8 +97,10 @@ def get_personal_projects(member):
     """
     Returns a list of all personal projects for a member
     """
-    details = api_get('{}/users/{}/projects'.format(API, member))
     project_urls = []
+
+    l.info("[*] Fetching personal projects for %s", member)
+    details = api_get('{}/users/{}/projects'.format(API, member))
 
     if not details:
         pass
@@ -92,13 +132,16 @@ def process_groups(groups):
             continue
 
         members = get_group_members(group)
+        for member in members:
+            personal_projects.update(get_personal_projects(member))
+        #group_projects = get_group_projects(group)
+
+        # Print / log all the gorey details
+        l.info("GROUP: %s (%s)", details['name'], details['web_url'])
+
         l.info("  MEMBERS:")
         for member in members:
             l.info("    %s", member)
-        #group_projects = get_group_projects(group)
-
-        for member in members:
-            personal_projects.update(get_personal_projects(member))
 
         l.info("  PERSONAL PROJECTS:")
         for link in personal_projects:
