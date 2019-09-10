@@ -66,14 +66,14 @@ def check_env(args):
     """
     if args.group or args.project:
         if not os.getenv('GITLAB_API'):
-            l.warning("[!] GITLAB_API environment variable is not set. Only"
-                      " public information will be retrieved.")
+            l.warning("[!] GITLAB_API environment variable is not set.")
+            sys.exit()
         else:
             l.info("[*] GITLAB_API is configured and will be used.")
     if args.team or args.repo:
         if not os.getenv('GITHUB_API'):
-            l.warning("[!] GITHUB_API environment variable is not set. Only"
-                      " public information will be retrieved.")
+            l.warning("[!] GITHUB_API environment variable is not set.")
+            sys.exit()
         else:
             l.info("[*] GITHUB_API is configured and will be used.")
 

@@ -1,5 +1,9 @@
 """
 GitLab specific checks for GitOSINT
+
+These are called from the parent program, with the two core functions being:
+    - process_groups
+    - process_projects
 """
 
 import re
@@ -16,7 +20,7 @@ def api_get(url):
     Helper function to interact with GitLab API using python requests
 
     The important things here are:
-        - Adding the PRIVATE-TOKEN header if using an API key
+        - Adding the PRIVATE-TOKEN header based on env variable
         - interacting with the pagination process via LINK headers
           (https://docs.gitlab.com/ee/api/README.html#pagination)
     """
@@ -25,6 +29,8 @@ def api_get(url):
     if api_key:
         headers = {'PRIVATE-TOKEN': api_key}
     else:
+        # Leaving this for possible future use, but program will actually
+        # sys.exit prior to this without an API key set.
         headers = None
 
     response = requests.get(url, headers=headers)
@@ -93,6 +99,23 @@ def get_group_members(group):
 
     return members
 
+def get_group_projects(group):
+    """
+    Returns a list of all projects belonging to a group
+    """
+    project_urls = []
+
+    l.info("[*] Fetching group projects for %s", group)
+    details = api_get('{}/groups/{}/projects'.format(API, group))
+
+    if not details:
+        pass
+
+    for item in details:
+        project_urls.append(item['web_url'])
+
+    return project_urls
+
 def get_personal_projects(member):
     """
     Returns a list of all personal projects for a member
@@ -134,16 +157,21 @@ def process_groups(groups):
         members = get_group_members(group)
         for member in members:
             personal_projects.update(get_personal_projects(member))
-        #group_projects = get_group_projects(group)
+
+        group_projects = get_group_projects(group)
 
         # Print / log all the gorey details
         l.info("GROUP: %s (%s)", details['name'], details['web_url'])
+
+        l.info("  GROUP PROJECTS:")
+        for link in group_projects:
+            l.info("    %s", link)
 
         l.info("  MEMBERS:")
         for member in members:
             l.info("    %s", member)
 
-        l.info("  PERSONAL PROJECTS:")
+        l.info("  MEMBERS' PERSONAL PROJECTS:")
         for link in personal_projects:
             l.info("    %s", link)
 
