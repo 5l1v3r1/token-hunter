@@ -72,6 +72,18 @@ def api_get(url):
     # If code not 200, no results to process
     return False
 
+def get_current_user():
+    """
+    Gets the current username, based on API key.
+    """
+    details = api_get('{}/user'.format(API))
+
+    if not details:
+        return False
+
+    username = details['username']
+    return username
+
 def get_group(group):
     """
     Validates access to a group via the API

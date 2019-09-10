@@ -87,6 +87,18 @@ def check_env(args):
         else:
             l.info("[*] GITHUB_API is configured and will be used.")
 
+def check_api_keys(args):
+    """
+    Tests API authentication prior to continuing
+    """
+    if args.group or args.project:
+        username = gitlab_checks.get_current_user()
+        if not username:
+            l.warning("[!] Cannot validate GitLab API key.")
+            sys.exit()
+
+        l.info("[*] Using GitLab API key assigned to username: %s", username)
+
 
 def main():
     """
@@ -99,6 +111,9 @@ def main():
 
     # Verify we have environment variables set for expected APIs
     check_env(args)
+
+    # Run an initial API call to validate API keys
+    check_api_keys(args)
 
     # Run the appropriate checks for each type
     try:
