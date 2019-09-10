@@ -16,6 +16,7 @@ import datetime
 import sys
 import os
 import argparse
+import requests
 from osint_tools import gitlab_checks
 from osint_tools import github_checks
 
@@ -57,8 +58,17 @@ def get_time():
     """
     now = datetime.datetime.now(datetime.timezone.utc)
     now_clean = now.strftime("%d/%m/%Y %H:%M:%S")
-    
+
     return now_clean
+
+def get_ip():
+    """
+    Returns public IP for log
+    """
+    response = requests.get('https://api.ipify.org')
+    ip_address = response.text
+
+    return ip_address
 
 def check_env(args):
     """
@@ -84,10 +94,11 @@ def main():
     """
     args = parse_arguments()
 
-    l.info("##### Git_OSINT started at UTC %s ##### ", get_time())
+    l.info("##### Git_OSINT started at UTC %s from IP %s##### ",
+           get_time(), get_ip())
 
     # Verify we have environment variables set for expected APIs
-    check_env(args) 
+    check_env(args)
 
     # Run the appropriate checks for each type
     try:
