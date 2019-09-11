@@ -44,8 +44,8 @@ def api_get(url):
             # results
             all_results = response.json()
             # Now, loop through until there is no 'next' link provided
-            pagenum = 1
-            while 'rel="next"' in response.headers['Link']:
+            pagenum = 2
+            while 'Link' in response.headers.keys() and 'rel="next"' in response.headers['Link']:
                 # Using print instead of logging, we don't want the per-page
                 # status update in the log file
                 print("[*] Processing page {}\r".format(pagenum), end='')
@@ -55,8 +55,10 @@ def api_get(url):
 
                 # Add the individual response to the collective
                 response = requests.get(next_url, headers=headers)
-                all_results += response.json()
-
+                if response.status_code == 200:
+                    all_results += response.json()
+                else:
+                    l.warning("[!] Error processing pagination URL: %s", next_url)
                 pagenum += 1
 
             # We need a line break if we've counted pages
@@ -70,6 +72,9 @@ def api_get(url):
         return response.json()
 
     # If code not 200, no results to process
+    l.warning("[!] API failure. Details:")
+    l.warning("    URL: %s", url)
+    l.warning("    Response Code: %s Reason: %s", response.status_code, response.reason)
     return False
 
 def get_current_user():
@@ -125,7 +130,7 @@ def get_group_projects(group):
         pass
 
     for item in details:
-        project_urls.append(item['web_url'])
+        project_urls.append(item['http_url_to_repo'])
 
     return project_urls
 
@@ -139,10 +144,10 @@ def get_personal_projects(member):
     details = api_get('{}/users/{}/projects'.format(API, member))
 
     if not details:
-        pass
+        return []
 
     for item in details:
-        project_urls.append(item['web_url'])
+        project_urls.append(item['http_url_to_repo'])
 
     return project_urls
 
