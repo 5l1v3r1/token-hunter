@@ -150,6 +150,7 @@ def process_projects(projects):
     """
     Process a GitLab project
     """
+    l.info("This function is not yet implemented.")
     return
 
 def process_groups(groups):
