@@ -19,6 +19,11 @@ export GITHUB_API=xxxxx
 
 If you are only querying GitLab, you only need to set that key. The same applies for GitHub.
 
+Next, install dependencies with:
+```
+pip3 install -r ./requirements.txt
+```
+
 Then, you can run the tool as follows:
 
 ```
