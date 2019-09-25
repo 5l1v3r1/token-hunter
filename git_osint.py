@@ -18,7 +18,7 @@ import os
 import argparse
 import requests
 
-from utilities import time
+from utilities import time, identity
 
 from osint_tools import gitlab_checks
 from osint_tools import github_checks
@@ -60,15 +60,6 @@ def parse_arguments():
 
     return args
 
-def get_ip():
-    """
-    Returns public IP for log
-    """
-    response = requests.get('https://api.ipify.org')
-    ip_address = response.text
-
-    return ip_address
-
 def check_env(args):
     """
     Check for environment variables
@@ -106,7 +97,7 @@ def main():
     args = parse_arguments()
 
     l.info("##### Git_OSINT started at UTC %s from IP %s##### ",
-           time.get_current_utc(), get_ip())
+           time.get_current_utc(), identity.get_public_ip())
 
     # Verify we have environment variables set for expected APIs
     check_env(args)
