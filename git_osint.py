@@ -18,7 +18,7 @@ import os
 import argparse
 import requests
 
-from utilities import time, identity
+from utilities import time, identity, validate
 
 from osint_tools import gitlab_checks
 from osint_tools import github_checks
@@ -77,19 +77,6 @@ def check_env(args):
         else:
             l.info("[*] GITHUB_API is configured and will be used.")
 
-def check_api_keys(args):
-    """
-    Tests API authentication prior to continuing
-    """
-    if args.group or args.project:
-        username = gitlab_checks.get_current_user()
-        if not username:
-            l.warning("[!] Cannot validate GitLab API key.")
-            sys.exit()
-
-        l.info("[*] Using GitLab API key assigned to username: %s", username)
-
-
 def main():
     """
     Main program function
@@ -103,7 +90,8 @@ def main():
     check_env(args)
 
     # Run an initial API call to validate API keys
-    check_api_keys(args)
+    if args.group or args.project or args.snippets:
+        validate.gitlab_api_keys(args)
 
     # Run the appropriate checks for each type
     try:
