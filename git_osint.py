@@ -97,7 +97,7 @@ def main():
     args = parse_arguments()
 
     l.info("##### Git_OSINT started at UTC %s from IP %s##### ",
-           time.get_current_utc(), identity.get_public_ip())
+           time.get_current(datetime.timezone.utc), identity.get_public_ip())
 
     # Verify we have environment variables set for expected APIs
     check_env(args)
