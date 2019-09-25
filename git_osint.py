@@ -17,6 +17,9 @@ import sys
 import os
 import argparse
 import requests
+
+from utilities import time
+
 from osint_tools import gitlab_checks
 from osint_tools import github_checks
 
@@ -37,6 +40,8 @@ def parse_arguments():
                         help='Name of a GitHub team')
     parser.add_argument('-r', '--repo', type=str, action='append',
                         help='Name of a GitHub repo')
+    parser.add_argument('-s', '--snippets', type=str, action='append',
+        help="Search snippets in gitlab for secrets")
 
     parser.add_argument('-l', '--logfile', type=str, action='store',
                         help='Will APPEND found items to specified file.')
@@ -54,15 +59,6 @@ def parse_arguments():
         l.getLogger().addHandler(l.FileHandler(args.logfile))
 
     return args
-
-def get_time():
-    """
-    Returns formatted time in UTC
-    """
-    now = datetime.datetime.now(datetime.timezone.utc)
-    now_clean = now.strftime("%d/%m/%Y %H:%M:%S")
-
-    return now_clean
 
 def get_ip():
     """
@@ -110,7 +106,7 @@ def main():
     args = parse_arguments()
 
     l.info("##### Git_OSINT started at UTC %s from IP %s##### ",
-           get_time(), get_ip())
+           time.get_current_utc(), get_ip())
 
     # Verify we have environment variables set for expected APIs
     check_env(args)
@@ -124,10 +120,9 @@ def main():
     except KeyboardInterrupt:
         l.info("[!] Keyboard Interrupt, abandon ship!")
 
-    l.info("##### Git_OSINT finished at UTC %s ##### ", get_time())
+    l.info("##### Git_OSINT finished at UTC %s ##### ", time.get_current_utc())
 
 def apply_args(args):
-    print(args.group)
     switcher = {
         args.group: gitlab_checks.process_groups(args.group),
         args.project: gitlab_checks.process_projects(args.project),

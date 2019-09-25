@@ -1,3 +1,0 @@
-"""
-Generic utilities for GitOSINT.
-"""
