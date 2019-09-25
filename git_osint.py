@@ -120,19 +120,20 @@ def main():
 
     # Run the appropriate checks for each type
     try:
-        if args.group:
-            gitlab_checks.process_groups(args.group)
-        if args.project:
-            gitlab_checks.process_projects(args.project)
-        if args.team:
-            github_checks.process_teams(args.team)
-        if args.repo:
-            github_checks.process_repos(args.repo)
+        apply_args(args)
     except KeyboardInterrupt:
         l.info("[!] Keyboard Interrupt, abandon ship!")
 
     l.info("##### Git_OSINT finished at UTC %s ##### ", get_time())
 
+def apply_args(args):
+    print(args.group)
+    switcher = {
+        args.group: gitlab_checks.process_groups(args.group),
+        args.project: gitlab_checks.process_projects(args.project),
+        args.team: gitlab_checks.process_projects(args.team),
+        args.repo: gitlab_checks.process_repos(args.repo)
+    }
 
 if __name__ == '__main__':
     main()
