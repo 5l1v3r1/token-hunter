@@ -40,6 +40,9 @@ def parse_arguments():
 
     parser.add_argument('-l', '--logfile', type=str, action='store',
                         help='Will APPEND found items to specified file.')
+    if len(sys.argv)==1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
 
     args = parser.parse_args()
 
