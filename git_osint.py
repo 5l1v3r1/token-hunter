@@ -10,34 +10,11 @@ looking for the following:
     - social media profiles of everyone involved
     - (more to come)
 """
-
-from logging import warning, info
-
 import datetime
 
-import os
-
+from logging import info
 from utilities import time, identity, validate, log, arguments
-
 from osint_tools import gitlab_checks
-
-
-def check_env(args):
-    """
-    Check for environment variables
-    """
-    if args.group or args.project:
-        if not os.getenv('GITLAB_API'):
-            warning("[!] GITLAB_API environment variable is not set.")
-            sys.exit()
-        else:
-            info("[*] GITLAB_API is configured and will be used.")
-    if args.team or args.repo:
-        if not os.getenv('GITHUB_API'):
-            warning("[!] GITHUB_API environment variable is not set.")
-            sys.exit()
-        else:
-            info("[*] GITHUB_API is configured and will be used.")
 
 
 def main():
@@ -46,16 +23,12 @@ def main():
     """
     args = arguments.parse()
     log.configure(args.logfile)
+    validate.environment(args)
 
     info("##### Git_OSINT started at UTC %s from IP %s##### ",
          time.get_current(datetime.timezone.utc), identity.get_public_ip())
 
-    # Verify we have environment variables set for expected APIs
-    check_env(args)
-
-    # Run an initial API call to validate API keys
-    if args.group or args.project or args.snippets:
-        validate.gitlab_api_keys(args)
+    validate.gitlab_api_keys(args)
 
     # Run the appropriate checks for each type
     try:

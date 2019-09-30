@@ -2,13 +2,14 @@
 Module to support logging info & output
 """
 
-import logging as l
+import logging
+import sys
 
 
-def configure(logging_enabled):
+def configure(logfile):
     # Start the logger, printing all to stdout
-    l.basicConfig(format='%(message)s', level=l.INFO, stream=sys.stdout)
+    logging.basicConfig(format='%(message)s', level=logging.INFO, stream=sys.stdout)
 
     # Add a logging handler for a file, if the user provides one
-    if logging_enabled:
-        l.getLogger().addHandler(l.FileHandler(args.logfile))
+    if logfile:
+        logging.getLogger().addHandler(logging.FileHandler(logfile))
