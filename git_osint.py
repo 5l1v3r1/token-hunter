@@ -14,7 +14,7 @@ import datetime
 
 from logging import info
 from utilities import time, identity, validate, log, arguments
-from osint_tools import gitlab_checks
+
 
 def main():
     """
