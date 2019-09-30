@@ -23,6 +23,7 @@ from utilities import time, identity, validate
 from osint_tools import gitlab_checks
 from osint_tools import github_checks
 
+
 def parse_arguments():
     """
     Parse user-supplied arguments
@@ -41,11 +42,11 @@ def parse_arguments():
     parser.add_argument('-r', '--repo', type=str, action='append',
                         help='Name of a GitHub repo')
     parser.add_argument('-s', '--snippets', type=str, action='append',
-        help="Enable search for snippets in gitlab for secrets")
+                        help="Enable search for snippets in gitlab for secrets")
 
     parser.add_argument('-l', '--logfile', type=str, action='store',
                         help='Will APPEND found items to specified file.')
-    if len(sys.argv)==1:
+    if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         sys.exit(1)
 
@@ -59,6 +60,7 @@ def parse_arguments():
         l.getLogger().addHandler(l.FileHandler(args.logfile))
 
     return args
+
 
 def check_env(args):
     """
@@ -76,6 +78,7 @@ def check_env(args):
             sys.exit()
         else:
             l.info("[*] GITHUB_API is configured and will be used.")
+
 
 def main():
     """
@@ -101,6 +104,7 @@ def main():
 
     l.info("##### Git_OSINT finished at UTC %s ##### ", time.get_current_utc())
 
+
 def apply_args(args):
     switcher = {
         args.group: gitlab_checks.process_groups(args.group),
@@ -108,6 +112,7 @@ def apply_args(args):
         args.team: gitlab_checks.process_projects(args.team),
         args.repo: gitlab_checks.process_repos(args.repo)
     }
+
 
 if __name__ == '__main__':
     main()
