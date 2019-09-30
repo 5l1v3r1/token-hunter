@@ -1,6 +1,8 @@
 import argparse
 import sys
 
+from osint_tools import gitlab_checks
+
 
 def parse():
     desc = "Collect OSINT from GitLab and GitHub"
@@ -26,3 +28,14 @@ def parse():
         sys.exit(1)
 
     return parser.parse_args()
+
+
+def apply_all(args):
+    if args.group:
+        gitlab_checks.process_groups(args.group)
+    if args.project:
+        gitlab_checks.process_projects(args.group)
+    if args.team:
+        gitlab_checks.process_team(args.team)
+    if args.repo:
+        gitlab_checks.process_repos(args.repo)

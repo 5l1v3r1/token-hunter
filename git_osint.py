@@ -16,7 +16,6 @@ from logging import info
 from utilities import time, identity, validate, log, arguments
 from osint_tools import gitlab_checks
 
-
 def main():
     """
     Main program function
@@ -32,20 +31,11 @@ def main():
 
     # Run the appropriate checks for each type
     try:
-        apply_args(args)
+        arguments.apply_all(args)
     except KeyboardInterrupt:
         info("[!] Keyboard Interrupt, abandon ship!")
 
-    info("##### Git_OSINT finished at UTC %s ##### ", time.get_current_utc())
-
-
-def apply_args(args):
-    switcher = {
-        args.group: gitlab_checks.process_groups(args.group),
-        args.project: gitlab_checks.process_projects(args.project),
-        args.team: gitlab_checks.process_projects(args.team),
-        args.repo: gitlab_checks.process_repos(args.repo)
-    }
+    info("##### Git_OSINT finished at UTC %s ##### ", time.get_current(datetime.timezone.utc))
 
 
 if __name__ == '__main__':

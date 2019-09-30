@@ -151,11 +151,18 @@ def get_personal_projects(member):
 
     return project_urls
 
+def process_repos(repo):
+    """
+    Process a GitLab repo
+    """
+    l.info("Repos:  This feature is not yet implemented.")
+    return
+
 def process_projects(projects):
     """
     Process a GitLab project
     """
-    l.info("This function is not yet implemented.")
+    l.info("Projects:  This feature is not yet implemented.")
     return
 
 def process_groups(groups):
