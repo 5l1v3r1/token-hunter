@@ -16,12 +16,10 @@ import datetime
 import sys
 import os
 import argparse
-import requests
 
-from utilities import time, identity, validate
+from utilities import time, identity, validate, log
 
 from osint_tools import gitlab_checks
-from osint_tools import github_checks
 
 
 def parse_arguments():
@@ -43,21 +41,16 @@ def parse_arguments():
                         help='Name of a GitHub repo')
     parser.add_argument('-s', '--snippets', type=str, action='append',
                         help="Enable search for snippets in gitlab for secrets")
-
     parser.add_argument('-l', '--logfile', type=str, action='store',
                         help='Will APPEND found items to specified file.')
+
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         sys.exit(1)
 
     args = parser.parse_args()
 
-    # Start the logger, printing all to stdout
-    l.basicConfig(format='%(message)s', level=l.INFO, stream=sys.stdout)
-
-    # Add a logging handler for a file, if the user provides one
-    if args.logfile:
-        l.getLogger().addHandler(l.FileHandler(args.logfile))
+    log.configure(args.logfile)
 
     return args
 
