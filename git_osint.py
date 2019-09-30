@@ -41,7 +41,7 @@ def parse_arguments():
     parser.add_argument('-r', '--repo', type=str, action='append',
                         help='Name of a GitHub repo')
     parser.add_argument('-s', '--snippets', type=str, action='append',
-        help="Search snippets in gitlab for secrets")
+        help="Enable search for snippets in gitlab for secrets")
 
     parser.add_argument('-l', '--logfile', type=str, action='store',
                         help='Will APPEND found items to specified file.')
