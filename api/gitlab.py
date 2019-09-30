@@ -109,7 +109,6 @@ def get(url):
             while 'Link' in response.headers.keys() and 'rel="next"' in response.headers['Link']:
                 # Using print instead of logging, we don't want the per-page
                 # status update in the log file
-                print("[*] Processing page {}\r".format(pagenum))
 
                 regex = re.compile(r'<([^<>]*?)>; rel="next"')
                 next_url = re.findall(regex, response.headers['Link'])[0]
@@ -121,10 +120,6 @@ def get(url):
                 else:
                     warning("[!] Error processing pagination URL: %s", next_url)
                 pagenum += 1
-
-            # We need a line break if we've counted pages
-            if pagenum > 1:
-                print("")
 
             # Return the collective results
             return all_results
