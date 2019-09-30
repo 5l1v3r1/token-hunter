@@ -22,7 +22,7 @@ def main():
     """
     args = arguments.parse()
     log.configure(args.logfile)
-    validate.environment(args)
+    validate.environment()
 
     info("##### Git_OSINT started at UTC %s from IP %s##### ",
          time.get_current(datetime.timezone.utc), identity.get_public_ip())
