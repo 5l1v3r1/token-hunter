@@ -7,40 +7,45 @@ from logging import warning, info
 BASE_URL = 'https://gitlab.com/api/v4'
 
 
+def get_snippets(projects):
+    snippets = {}
+    for project in projects:
+        for key, value in project.items():
+            details = get('{}/projects/{}/snippets'.format(BASE_URL, key))
+            info("[*] Found %s snippets for project %s", len(details), value)
+            for item in details:
+                snippets[item['id']] = item['web_url']
+    return snippets
+
+
 def get_personal_projects(member):
     """
     Returns a list of all personal projects for a member
     """
-    project_urls = []
+    personal_projects = {}
 
-    info("[*] Fetching personal projects for %s", member)
     details = get('{}/users/{}/projects'.format(BASE_URL, member))
-
-    if not details:
-        return []
+    info("[*] Found %s projects for member %s", len(details), member)
 
     for item in details:
-        project_urls.append(item['http_url_to_repo'])
+        personal_projects[item['id']] = item['http_url_to_repo']
 
-    return project_urls
+    return personal_projects
 
 
 def get_group_projects(group):
     """
     Returns a list of all projects belonging to a group
     """
-    project_urls = []
+    group_projects = {}
 
-    info("[*] Fetching group projects for %s", group)
     details = get('{}/groups/{}/projects'.format(BASE_URL, group))
-
-    if not details:
-        pass
+    info("[*] Found %s projects for group %s", len(details), group)
 
     for item in details:
-        project_urls.append(item['http_url_to_repo'])
+        group_projects[item['id']] = item['http_url_to_repo']
 
-    return project_urls
+    return group_projects
 
 
 def get_group(group):
@@ -62,8 +67,8 @@ def get_group_members(group):
     """
     members = []
 
-    info("[*] Fetching group members for %s", group)
     details = get('{}/groups/{}/members'.format(BASE_URL, group))
+    info("[*] Found %s members for group %s", len(details), group)
 
     # We should now have a list of dictionary items, need to parse through
     # each one to extract the member info.

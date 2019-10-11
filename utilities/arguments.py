@@ -24,4 +24,4 @@ def parse():
 
 def apply_all(args):
     if args.group:
-        gitlab_checks.process_groups(args.group)
+        gitlab_checks.process_groups(args.group, args.snippets)

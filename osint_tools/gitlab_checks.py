@@ -11,13 +11,13 @@ from logging import info, warning
 from api import gitlab
 
 
-def process_groups(groups):
+def process_groups(groups, snippets):
     """
     Process a GitLab group
     """
     # There might be a lot of duplicates when process subgroups and
     # projects, so start some sets.
-    personal_projects = set()
+    personal_projects = {}
 
     for group in groups:
         group_details = gitlab.get_group(group)
@@ -25,23 +25,51 @@ def process_groups(groups):
             warning("[!] %s not found, skipping", group)
             continue
 
+        group_projects = gitlab.get_group_projects(group)
         members = gitlab.get_group_members(group)
+
         for member in members:
             personal_projects.update(gitlab.get_personal_projects(member))
 
-        group_projects = gitlab.get_group_projects(group)
+        snippets = gitlab.get_snippets([group_projects, personal_projects])
 
         # Print / log all the gorey details
-        info("GROUP: %s (%s)", group_details['name'], group_details['web_url'])
+        log_group(group_details)
+        log_projects(group_projects)
+        log_members(members)
+        log_members_projects(personal_projects)
+        log_related_snippets(snippets, [group_projects, personal_projects])
 
-        info("  GROUP PROJECTS (%s):", len(group_projects))
-        for link in group_projects:
-            info("    %s", link)
 
-        info("  MEMBERS (%s):", len(members))
-        for member in members:
-            info("    %s", member)
+def get_total_projects(projects):
+    cnt = 0
+    for project in projects:
+        for item in project:
+            cnt += 1
+    return cnt
 
-        info("  MEMBERS' PERSONAL PROJECTS (%s):", len(personal_projects))
-        for link in personal_projects:
-            info("    %s", link)
+
+def log_related_snippets(snippets, projects):
+    info("  FOUND (%s) SNIPPETS IN (%s) TOTAL PROJECTS", len(snippets), get_total_projects(projects))
+
+
+def log_group(group_details):
+    info("GROUP: %s (%s)", group_details['name'], group_details['web_url'])
+
+
+def log_projects(group_projects):
+    info("  GROUP PROJECTS (%s):", len(group_projects))
+    for link in group_projects:
+        info("    %s", link)
+
+
+def log_members(members):
+    info("  MEMBERS (%s):", len(members))
+    for member in members:
+        info("    %s", member)
+
+
+def log_members_projects(personal_projects):
+    info("  MEMBERS' PERSONAL PROJECTS (%s):", len(personal_projects))
+    for value in personal_projects.values():
+        info("    %s", value)
