@@ -5,7 +5,7 @@ from osint_tools import gitlab_checks
 
 
 def parse():
-    desc = "Collect OSINT from GitLab and GitHub"
+    desc = "Collect OSINT from GitLab"
     parser = argparse.ArgumentParser(description=desc)
 
     parser.add_argument('-g', '--group', type=str, action='append',
