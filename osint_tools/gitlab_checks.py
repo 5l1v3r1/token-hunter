@@ -18,6 +18,7 @@ def process_groups(groups, snippets):
     # There might be a lot of duplicates when process subgroups and
     # projects, so start some sets.
     personal_projects = {}
+    all_snippets = {}
 
     for group in groups:
         group_details = gitlab.get_group(group)
