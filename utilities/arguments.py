@@ -10,7 +10,7 @@ def parse():
 
     parser.add_argument('-g', '--group', type=str, action='append', required=True,
                         help='Name of a GitLab group')
-    parser.add_argument('-s', '--snippets', type=bool, action='append',
+    parser.add_argument('-s', '--snippets', action='store_true',
                         help='Enable search for snippets in gitlab for secrets.  ')
     parser.add_argument('-l', '--logfile', type=str, action='store',
                         help='Will APPEND found items to specified file.')
