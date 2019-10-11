@@ -8,7 +8,7 @@ def parse():
     desc = "Collect OSINT from GitLab"
     parser = argparse.ArgumentParser(description=desc)
 
-    parser.add_argument('-g', '--group', type=str, action='append',
+    parser.add_argument('-g', '--group', type=str, action='append', required=True,
                         help='Name of a GitLab group')
     parser.add_argument('-s', '--snippets', type=bool, action='append',
                         help='Enable search for snippets in gitlab for secrets.  ')
