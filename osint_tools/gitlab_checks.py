@@ -63,8 +63,8 @@ def log_group(group_details):
 
 def log_projects(group_projects):
     info("  GROUP PROJECTS (%s):", len(group_projects))
-    for link in group_projects:
-        info("    %s", link)
+    for value in group_projects.values():
+        info("    %s", value)
 
 
 def log_members(members):
