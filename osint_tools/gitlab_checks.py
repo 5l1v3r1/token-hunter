@@ -31,14 +31,16 @@ def process_groups(groups, snippets):
         for member in members:
             personal_projects.update(gitlab.get_personal_projects(member))
 
-        snippets = gitlab.get_snippets([group_projects, personal_projects])
+        if snippets:
+            all_snippets = gitlab.get_snippets([group_projects, personal_projects])
 
         # Print / log all the gorey details
         log_group(group_details)
         log_projects(group_projects)
         log_members(members)
         log_members_projects(personal_projects)
-        log_related_snippets(snippets, [group_projects, personal_projects])
+        if snippets:
+            log_related_snippets(all_snippets, [group_projects, personal_projects])
 
 
 def get_total_projects(projects):
