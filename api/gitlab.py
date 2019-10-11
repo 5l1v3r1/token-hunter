@@ -12,7 +12,8 @@ def get_snippets(projects):
     for project in projects:
         for key, value in project.items():
             details = get('{}/projects/{}/snippets'.format(BASE_URL, key))
-            info("[*] Found %s snippets for project %s", len(details), value)
+            if len(details) > 0:
+                info("[*] Found %s snippets for project %s", len(details), value)
             for item in details:
                 snippets[item['id']] = item['web_url']
     return snippets
@@ -25,7 +26,8 @@ def get_personal_projects(member):
     personal_projects = {}
 
     details = get('{}/users/{}/projects'.format(BASE_URL, member))
-    info("[*] Found %s projects for member %s", len(details), member)
+    if len(details) > 0:
+        info("[*] Found %s projects for member %s", len(details), member)
 
     for item in details:
         personal_projects[item['id']] = item['http_url_to_repo']
@@ -40,7 +42,8 @@ def get_group_projects(group):
     group_projects = {}
 
     details = get('{}/groups/{}/projects'.format(BASE_URL, group))
-    info("[*] Found %s projects for group %s", len(details), group)
+    if len(details) > 0:
+        info("[*] Found %s projects for group %s", len(details), group)
 
     for item in details:
         group_projects[item['id']] = item['http_url_to_repo']
@@ -68,7 +71,8 @@ def get_group_members(group):
     members = []
 
     details = get('{}/groups/{}/members'.format(BASE_URL, group))
-    info("[*] Found %s members for group %s", len(details), group)
+    if len(details) > 0:
+        info("[*] Found %s members for group %s", len(details), group)
 
     # We should now have a list of dictionary items, need to parse through
     # each one to extract the member info.
