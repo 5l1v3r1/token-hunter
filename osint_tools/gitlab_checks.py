@@ -53,6 +53,8 @@ def get_total_projects(projects):
 
 def log_related_snippets(snippets, projects):
     info("  FOUND (%s) SNIPPETS IN (%s) TOTAL PROJECTS", len(snippets), get_total_projects(projects))
+    for value in snippets.values():
+        info("    %s", value)
 
 
 def log_group(group_details):
