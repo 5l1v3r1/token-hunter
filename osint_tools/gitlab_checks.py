@@ -4,12 +4,7 @@ from logging import info, warning
 from api import gitlab_groups, gitlab_projects, gitlab_snippets, gitlab_members
 
 
-def process_groups(groups, snippets):
-    """
-    Process a GitLab group
-    """
-    # There might be a lot of duplicates when process subgroups and
-    # projects, so start some sets.
+def process_all(groups, snippets):
     personal_projects = {}
     all_snippets = {}
 
