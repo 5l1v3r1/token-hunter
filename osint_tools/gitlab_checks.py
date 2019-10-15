@@ -1,7 +1,7 @@
 
 from logging import info, warning
 
-from api import gitlab_groups, gitlab_projects, gitlab_snippets
+from api import gitlab_groups, gitlab_projects, gitlab_snippets, gitlab_members
 
 
 def process_groups(groups, snippets):
@@ -20,7 +20,7 @@ def process_groups(groups, snippets):
             continue
 
         group_projects = gitlab_projects.all_group_projects(group)
-        members = gitlab_groups.all_members(group)
+        members = gitlab_members.all_members(group)
 
         for member in members:
             personal_projects.update(gitlab_projects.all_member_projects(member))
