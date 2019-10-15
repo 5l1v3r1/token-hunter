@@ -7,16 +7,8 @@ from logging import warning, info
 BASE_URL = 'https://gitlab.com/api/v4'
 
 
-def get_snippets(projects):
-    snippets = {}
-    for project in projects:
-        for key, value in project.items():
-            details = get('{}/projects/{}/snippets'.format(BASE_URL, key))
-            if len(details) > 0:
-                info("[*] Found %s snippets for project %s", len(details), value)
-            for item in details:
-                snippets[item['id']] = item['web_url']
-    return snippets
+def get_snippets(project):
+    return get('{}/projects/{}/snippets'.format(BASE_URL, project))
 
 
 def get_personal_projects(member):
