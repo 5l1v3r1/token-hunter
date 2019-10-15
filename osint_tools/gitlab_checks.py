@@ -14,8 +14,8 @@ def process_groups(groups, snippets):
     all_snippets = {}
 
     for group in groups:
-        group_details = gitlab_groups.all_groups(group)
-        if not group_details:
+        group_details = gitlab_groups.get_group(group)
+        if len(group_details) == 0:
             warning("[!] %s not found, skipping", group)
             continue
 

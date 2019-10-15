@@ -20,16 +20,7 @@ def get_group_projects(group):
 
 
 def get_group(group):
-    """
-    Validates access to a group via the api
-    """
-    info("[*] Fetching group details for %s", group)
-    group_details = get('{}/groups/{}'.format(BASE_URL, group))
-
-    if not group_details:
-        return False
-
-    return group_details
+    return get('{}/groups/{}'.format(BASE_URL, group))
 
 
 def get_members(group):

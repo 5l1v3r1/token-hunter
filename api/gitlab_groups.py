@@ -1,8 +1,11 @@
 from api import gitlab
+from logging import info
 
 
-def all_groups(group):
-    return gitlab.get_group(group)
+def get_group(group):
+    info("[*] Fetching group details for %s", group)
+    group_details = gitlab.get_group(group)
+    return group_details
 
 
 def all_members(group):
