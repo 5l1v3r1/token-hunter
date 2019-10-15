@@ -16,19 +16,7 @@ def get_personal_projects(member):
 
 
 def get_group_projects(group):
-    """
-    Returns a list of all projects belonging to a group
-    """
-    group_projects = {}
-
-    details = get('{}/groups/{}/projects'.format(BASE_URL, group))
-    if len(details) > 0:
-        info("[*] Found %s projects for group %s", len(details), group)
-
-    for item in details:
-        group_projects[item['id']] = item['http_url_to_repo']
-
-    return group_projects
+    return get('{}/groups/{}/projects'.format(BASE_URL, group))
 
 
 def get_group(group):

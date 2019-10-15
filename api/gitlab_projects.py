@@ -3,7 +3,16 @@ from logging import info, warning
 
 
 def all_group_projects(group):
-    return gitlab.get_group_projects(group)
+    group_projects = {}
+
+    details = gitlab.get_group_projects(group)
+    if len(details) > 0:
+        info("[*] Found %s projects for group %s", len(details), group)
+
+    for item in details:
+        group_projects[item['id']] = item['http_url_to_repo']
+
+    return group_projects
 
 
 def all_member_projects(member):
