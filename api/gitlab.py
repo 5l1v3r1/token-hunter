@@ -24,21 +24,7 @@ def get_group(group):
 
 
 def get_members(group):
-    """
-    Returns a list of all members of a group
-    """
-    members = []
-
-    details = get('{}/groups/{}/members'.format(BASE_URL, group))
-    if len(details) > 0:
-        info("[*] Found %s members for group %s", len(details), group)
-
-    # We should now have a list of dictionary items, need to parse through
-    # each one to extract the member info.
-    for item in details:
-        members.append(item['username'])
-
-    return members
+    return get('{}/groups/{}/members'.format(BASE_URL, group))
 
 
 def get_current_user():
