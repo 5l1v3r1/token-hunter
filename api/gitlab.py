@@ -64,7 +64,7 @@ def get_group(group):
     return group_details
 
 
-def get_group_members(group):
+def get_members(group):
     """
     Returns a list of all members of a group
     """

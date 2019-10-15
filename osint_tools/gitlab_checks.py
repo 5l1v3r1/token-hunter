@@ -1,14 +1,7 @@
-"""
-GitLab specific checks for GitOSINT
-
-These are called from the parent program, with the two core functions being:
-    - process_groups
-    - process_projects
-"""
 
 from logging import info, warning
 
-from api import gitlab
+from api import gitlab_groups, gitlab_projects, gitlab_snippets
 
 
 def process_groups(groups, snippets):
@@ -21,19 +14,19 @@ def process_groups(groups, snippets):
     all_snippets = {}
 
     for group in groups:
-        group_details = gitlab.get_group(group)
+        group_details = gitlab_groups.all_groups(group)
         if not group_details:
             warning("[!] %s not found, skipping", group)
             continue
 
-        group_projects = gitlab.get_group_projects(group)
-        members = gitlab.get_group_members(group)
+        group_projects = gitlab_projects.all_group_projects(group)
+        members = gitlab_groups.all_members(group)
 
         for member in members:
-            personal_projects.update(gitlab.get_personal_projects(member))
+            personal_projects.update(gitlab_projects.all_member_projects(member))
 
         if snippets:
-            all_snippets = gitlab.get_snippets([group_projects, personal_projects])
+            all_snippets = gitlab_snippets.all_snippets([group_projects, personal_projects])
 
         # Print / log all the gorey details
         log_group(group_details)
