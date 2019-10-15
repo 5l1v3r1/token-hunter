@@ -20,19 +20,7 @@ def get_snippets(projects):
 
 
 def get_personal_projects(member):
-    """
-    Returns a list of all personal projects for a member
-    """
-    personal_projects = {}
-
-    details = get('{}/users/{}/projects'.format(BASE_URL, member))
-    if len(details) > 0:
-        info("[*] Found %s projects for member %s", len(details), member)
-
-    for item in details:
-        personal_projects[item['id']] = item['http_url_to_repo']
-
-    return personal_projects
+    return get('{}/users/{}/projects'.format(BASE_URL, member))
 
 
 def get_group_projects(group):
