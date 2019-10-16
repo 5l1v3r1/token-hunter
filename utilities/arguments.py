@@ -6,12 +6,12 @@ from osint_tools import gitlab_checks
 
 def parse():
     desc = "Collect OSINT from GitLab"
-    parser = argparse.ArgumentParser(description=desc)
-
-    parser.add_argument('-g', '--group', type=str, action='append', required=True,
-                        help='Name of a GitLab group')
+    parser = argparse.ArgumentParser(description="Collect OSINT for GitLab Groups, Projects, Members, and Snippets")
+    required_named = parser.add_argument_group('required arguments')
+    required_named.add_argument('-g', '--group', type=str, action='append', required=True,
+                                help='ID or name of a GitLab group')
     parser.add_argument('-s', '--snippets', action='store_true',
-                        help='Enable search for snippets in gitlab for secrets.  ')
+                        help='Searches the snippets associated with projects the group maintains for secrets')
     parser.add_argument('-l', '--logfile', type=str, action='store',
                         help='Will APPEND found items to specified file.')
 
