@@ -7,7 +7,7 @@ from logging import warning, info
 BASE_URL = 'https://gitlab.com/api/v4'
 
 
-def get_snippets(project):
+def get_project_snippets(project):
     return get('{}/projects/{}/snippets'.format(BASE_URL, project))
 
 
