@@ -3,7 +3,11 @@ image: "python:latest"
 before_script:
   - apt-get update -qq
   - pip3 install -r ./requirements.txt
+  only:
+    - master
 
 test:
   script:
     - pytest -v
+  only:
+    - master
