@@ -63,3 +63,9 @@ def test_finds_gitlab_pat_in_text_block():
             }
         """)
     assert target.get_secrets(content) == {"GitLab PAT": "-1a890cm-kforemg980="}
+
+
+def test_finds_slack_token_in_simple_text():
+    target = gitlab_snippets_monitor.GitLabSnippetMonitor()
+    content = "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
+    assert target.get_secrets(content) == {"Slack Token": content}
