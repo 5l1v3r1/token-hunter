@@ -1,15 +1,4 @@
 #!/usr/bin/env python3
-
-"""
-GitOSINT!
-
-Learn more about your friends and colleagues. Provide this tool with
-the URL of git project, group, repo, or team. GitOSINT will crawl the site,
-looking for the following:
-    - personal projects of all members, contributors
-    - social media profiles of everyone involved
-    - (more to come)
-"""
 import datetime
 
 from logging import info

@@ -13,8 +13,10 @@ Currently, secrets detection is performed for GitLab snippets only by adding the
 You provide a starting point, like a group ID on GitLab. This tool will use the appropriate API to find all projects, 
 users and snippets associated with that starting point, and enumerate git projects and they own or contribute to and 
 will list all the snippets associated with each project in the group.  In addition, if you provide the `-s` switch, all
-snippets associated with each project in the group will be searched for sensitive information using the [set of regular
-expressions provided](./regexes.json).
+[GitLab Snippets](https://docs.gitlab.com/ee/user/snippets.html) associated with each project in the group will be 
+searched for sensitive information using the [set of regular expressions provided](./regexes.json).  The starting set 
+originated from open source project [TruffleHogRegex](https://github.com/dxa4481/truffleHogRegexes) and was 
+appended to look for GitLab personal access tokens (PATs).  You may alter this list as you see fit.
 
 All data is printed to the console, and is optionally logged to a file.
 
@@ -47,6 +49,16 @@ required arguments:
   -g GROUP, --group GROUP
                         ID or name of a GitLab group
 ```
+
+Examples:
+`./git_osint.py -g <123456>`
+Runs Git OSINT for the group specified, dumping the URLs for each project maintained by the group as well as all project
+URLs for the members in that group.
+
+`./git_osint.py -g <123456> -s`
+Same as above with one functional addition.  The `-s` switch will tell the application to search for all 
+[GitLab Snippets](https://docs.gitlab.com/ee/user/snippets.html) associated with each project the group maintains, as
+well as snippets for each personal project maintained by members of the group.
 
 # Project Status
 Currently, only the following functions are implemented:
