@@ -11,6 +11,10 @@ def get_project_snippets(project):
     return get('{}/projects/{}/snippets'.format(BASE_URL, project))
 
 
+def get_snippet_raw(snippet_id):
+    return get('{}/snippets/{}/raw?line_ending=raw'.format(BASE_URL, snippet_id))
+
+
 def get_personal_projects(member):
     return get('{}/users/{}/projects'.format(BASE_URL, member))
 
