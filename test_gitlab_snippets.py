@@ -17,7 +17,7 @@ def test_handles_nil():
 def test_finds_simple_json_gitlab_pat():
     target = gitlab_snippets_monitor.GitLabSnippetMonitor()
     content = "API_KEY:a8pt01843901sdf0-a_1"
-    assert target.get_secrets(content) == {"API_KEY": "a8pt01843901sdf0-a_1"}
+    assert target.get_secrets(content) == {"GitLab PAT": "a8pt01843901sdf0-a_1"}
 
 
 def test_regexes_are_loaded():

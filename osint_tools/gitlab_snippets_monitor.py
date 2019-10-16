@@ -18,6 +18,5 @@ class GitLabSnippetMonitor:
         for key in self.regexes:
             match = self.regexes[key].search(content)
             if match:
-                print(match)
                 result[key] = match.group(1)
         return result
