@@ -65,7 +65,33 @@ def test_finds_gitlab_pat_in_text_block():
     assert target.get_secrets(content) == {"GitLab PAT": "-1a890cm-kforemg980="}
 
 
-def test_finds_slack_token_in_simple_text():
+def test_finds_naked_slack_token():
     target = gitlab_snippets_monitor.GitLabSnippetMonitor()
     content = "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
     assert target.get_secrets(content) == {"Slack Token": content}
+
+
+def test_finds_ambiguous_tokens_in_text_block():
+    target = gitlab_snippets_monitor.GitLabSnippetMonitor()
+    content = textwrap.dedent("""\
+        import enum
+        import os
+        
+        from aircademy.fields import *
+        from aircademy.filterutils import *
+        from aircademy.record import BaseRecord
+        
+        
+        class GoTCharacterRecord(BaseRecord):
+            class Meta:
+                token: "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
+        
+            # Some other stuff goes here
+        
+        
+        # The fun part goes here
+    """)
+    assert target.get_secrets(content) == {
+        "Slack Token": "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1",
+        "GitLab PAT": "xoxp-912111665212-11"
+    }
