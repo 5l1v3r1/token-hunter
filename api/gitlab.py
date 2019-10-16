@@ -79,7 +79,9 @@ def get(url):
             return all_results
 
         # Otherwise, return just the single result
-        return response.json()
+        if response.headers["Content-Type"] == "application/json":
+            return response.json()
+        return response.text
 
     # If code not 200, no results to process
     warning("[!] API failure. Details:")
