@@ -44,6 +44,8 @@ def get_total_projects(projects):
 
 
 def log_all_secrets(all_secrets, all_snippets):
+    if len(all_snippets) == 0:
+        return
     info("  FOUND (%s) SECRETS IN (%s) TOTAL SNIPPETS", len(all_secrets), len(all_snippets))
     for key, value in all_secrets:
         info("    %s:%s", key, value)
