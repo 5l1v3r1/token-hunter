@@ -13,8 +13,9 @@ def main():
     log.configure(args.logfile)
     validate.environment()
 
-    info("##### Git_OSINT started at UTC %s from IP %s##### ",
-         time.get_current(datetime.timezone.utc), identity.get_public_ip())
+    if args.timestamp:
+        info("##### Git_OSINT started at UTC %s from IP %s##### ",
+             time.get_current(datetime.timezone.utc), identity.get_public_ip())
 
     validate.gitlab_api_keys(args)
 
@@ -24,7 +25,8 @@ def main():
     except KeyboardInterrupt:
         info("[!] Keyboard Interrupt, abandon ship!")
 
-    info("##### Git_OSINT finished at UTC %s ##### ", time.get_current(datetime.timezone.utc))
+    if args.timestamp:
+        info("##### Git_OSINT finished at UTC %s ##### ", time.get_current(datetime.timezone.utc))
 
 
 if __name__ == '__main__':
