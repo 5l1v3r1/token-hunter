@@ -48,7 +48,7 @@ def log_all_secrets(all_secrets, all_snippets):
         return
     info("  FOUND (%s) SECRET(S) IN (%s) TOTAL SNIPPET(S)", len(all_secrets), len(all_snippets))
     for secret in all_secrets:
-        info("    Url: %s Type: %s; Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("    Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
 
 
 def log_related_snippets(snippets, projects):
