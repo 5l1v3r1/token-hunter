@@ -1,6 +1,7 @@
 from api import gitlab
 from logging import info
 from osint_tools import gitlab_snippets_monitor
+from utilities import snippet
 
 
 def all_snippets(projects):
@@ -11,7 +12,7 @@ def all_snippets(projects):
             if len(details) > 0:
                 info("[*] Found %s snippets for project %s", len(details), value)
             for item in details:
-                snippets[item['id']] = item['web_url']
+                snippets.update({item['id']: item['web_url']})
     return snippets
 
 
@@ -19,15 +20,14 @@ def get_snippet_raw(snippet_id):
     return gitlab.get_snippet_raw(snippet_id)
 
 
-def sniff_secrets(snippet_ids):
-    if len(snippet_ids) == 0:
-        return {}
-    secrets = {}
+def sniff_secrets(snippets):
+    if len(snippets.keys()) == 0:
+        return []
+    secrets = []
     monitor = gitlab_snippets_monitor.GitLabSnippetMonitor()
-    for snippet_id in snippet_ids:
+    for snippet_id, snippet_url in snippets.items():
         raw_content = gitlab.get_snippet_raw(snippet_id)
         found_secrets = monitor.get_secrets(raw_content)
-        if len(found_secrets) > 0:
-            secrets.update(found_secrets)
+        for secret_type, secret in found_secrets.items():
+            secrets.append(snippet.SnippetSecret(secret_type, secret, snippet_url))
     return secrets
-

@@ -23,7 +23,7 @@ def process_all(groups, snippets):
 
         if snippets:
             all_snippets = gitlab_snippets.all_snippets([group_projects, personal_projects])
-            all_secrets = gitlab_snippets.sniff_secrets(all_snippets.keys())
+            all_secrets = gitlab_snippets.sniff_secrets(all_snippets)
 
         # Print / log all the gorey details
         log_group(group_details)
@@ -46,13 +46,13 @@ def get_total_projects(projects):
 def log_all_secrets(all_secrets, all_snippets):
     if len(all_snippets) == 0:
         return
-    info("  FOUND (%s) SECRETS IN (%s) TOTAL SNIPPETS", len(all_secrets), len(all_snippets))
-    for key, value in all_secrets:
-        info("    %s:%s", key, value)
+    info("  FOUND (%s) SECRET(S) IN (%s) TOTAL SNIPPET(S)", len(all_secrets), len(all_snippets))
+    for secret in all_secrets:
+        info("    Url: %s Type: %s; Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
 
 
 def log_related_snippets(snippets, projects):
-    info("  FOUND (%s) SNIPPETS IN (%s) TOTAL PROJECTS", len(snippets), get_total_projects(projects))
+    info("  FOUND (%s) SNIPPET(S) IN (%s) TOTAL PROJECT(S)", len(snippets), get_total_projects(projects))
     for value in snippets.values():
         info("    %s", value)
 
