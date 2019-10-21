@@ -17,7 +17,7 @@ def test_handles_nil():
 def test_finds_simple_json_gitlab_pat():
     target = gitlab_snippets_monitor.GitLabSnippetMonitor()
     content = "API_KEY:a8pt01843901sdf0-a_1"
-    assert target.get_secrets(content) == {"GitLab PAT": "a8pt01843901sdf0-a_1"}
+    assert target.get_secrets(content) == {"GitLab PAT": ":a8pt01843901sdf0-a_1"}
 
 
 def test_regexes_are_loaded():
@@ -62,7 +62,7 @@ def test_finds_gitlab_pat_in_text_block():
                 }
             }
         """)
-    assert target.get_secrets(content) == {"GitLab PAT": "-1a890cm-kforemg980="}
+    assert target.get_secrets(content) == {"GitLab PAT": '"-1a890cm-kforemg980='}
 
 
 def test_finds_naked_slack_token():
@@ -93,5 +93,17 @@ def test_finds_ambiguous_tokens_in_text_block():
     """)
     assert target.get_secrets(content) == {
         "Slack Token": "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1",
-        "GitLab PAT": "xoxp-912111665212-11"
+        "GitLab PAT": '"xoxp-912111665212-11'
+    }
+
+
+def test_finds_single_group_results():
+    target = gitlab_snippets_monitor.GitLabSnippetMonitor()
+    content = textwrap.dedent("""\
+            -----BEGIN RSA PRIVATE KEY-----
+            asdfjwpoidnsohfohoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
+            -----END RSA PRIVATE KEY-----"
+        """)
+    assert target.get_secrets(content) == {
+        "RSA private key": "-----BEGIN RSA PRIVATE KEY-----"
     }
