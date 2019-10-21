@@ -3,7 +3,7 @@ from logging import warning
 import os
 import re
 import requests
-from logging import info
+from logging import error, info
 
 BASE_URL = 'https://gitlab.com/api/v4'
 
@@ -54,8 +54,9 @@ def get(url):
 
     headers = {'PRIVATE-TOKEN': os.getenv('GITLAB_API')}
     response = requests.get(url, headers=headers)
-    if response.headers["RateLimit-Observed"] == response.headers["RateLimit-Limit"]:
-        log_rate_limit_info(response.headers["RateLimit-ResetTime"])
+    log_rate_limit_info(response.headers["RateLimit-Observed"],
+                        response.headers["RateLimit-Limit"],
+                        response.headers["RateLimit-ResetTime"])
 
     if response.status_code == 200:
         # The "Link" header is returned when there is more than one page of
@@ -97,5 +98,7 @@ def get(url):
     return False
 
 
-def log_rate_limit_info(reset_time):
-    info(f'[!] Rate limit met!  Reset time is:  {reset_time}')
+def log_rate_limit_info(observed, limit, reset_time):
+    print(f"[*] Rate Limit: {observed}/{limit} req/min.", end="\r")
+    if observed == limit:
+        error(f"[!] Rate limit hit ({observed}/{limit})!  Resets time: {reset_time}.")
