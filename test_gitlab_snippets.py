@@ -107,3 +107,15 @@ def test_finds_single_group_results():
     assert target.get_secrets(content) == {
         "RSA private key": "-----BEGIN RSA PRIVATE KEY-----"
     }
+
+
+def test_finds_openssh_private_key():
+    target = gitlab_snippets_monitor.GitLabSnippetMonitor()
+    content = textwrap.dedent("""\
+                    -----BEGIN OPENSSH PRIVATE KEY-----
+                    asdfjwpoidnsohfohoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
+                    -----END OPENSSH PRIVATE KEY-----"
+                """)
+    assert target.get_secrets(content) == {
+        "OpenSSH private key": "-----BEGIN OPENSSH PRIVATE KEY-----"
+    }
