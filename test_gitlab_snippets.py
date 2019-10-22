@@ -102,11 +102,9 @@ def test_finds_single_group_results():
     content = textwrap.dedent("""\
             -----BEGIN RSA PRIVATE KEY-----
             asdfjwpoidnsohfohoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
-            -----END RSA PRIVATE KEY-----"
+            -----END RSA PRIVATE KEY-----
         """)
-    assert target.get_secrets(content) == {
-        "RSA private key": "-----BEGIN RSA PRIVATE KEY-----"
-    }
+    assert len(target.get_secrets(content)) == 1
 
 
 def test_finds_openssh_private_key():
@@ -116,6 +114,4 @@ def test_finds_openssh_private_key():
                     asdfjwpoidnsohfohoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
                     -----END OPENSSH PRIVATE KEY-----"
                 """)
-    assert target.get_secrets(content) == {
-        "OpenSSH private key": "-----BEGIN OPENSSH PRIVATE KEY-----"
-    }
+    assert len(target.get_secrets(content)) == 1
