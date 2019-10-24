@@ -4,10 +4,10 @@ from logging import info, warning
 from api import gitlab_groups, gitlab_projects, gitlab_snippets, gitlab_members, gitlab_issues
 
 
-def process_all(groups, snippets, issues):
+def process_all(args):
     personal_projects = {}
-
-    for group in groups:
+    info(args)
+    for group in args.group:
         group_details = gitlab_groups.get_group(group)
         if len(group_details) == 0:
             warning("[!] %s not found, skipping", group)
@@ -16,23 +16,26 @@ def process_all(groups, snippets, issues):
         group_projects = gitlab_projects.all_group_projects(group)
         members = gitlab_members.all_members(group)
 
-        for member in members:
-            personal_projects.update(gitlab_projects.all_member_projects(member))
+        if args.members:
+            for member in members:
+                personal_projects.update(gitlab_projects.all_member_projects(member))
 
         # Print / log all the gorey details for groups and members
         log_group(group_details)
         log_projects(group_projects)
         log_members(members)
-        log_members_projects(personal_projects)
+
+        if args.members:
+            log_members_projects(personal_projects)
 
         # Go get the snippets content and log it if the switch is provided
-        if snippets:
+        if args.snippets:
             all_snippets = gitlab_snippets.all_snippets([group_projects, personal_projects])
             all_secrets = gitlab_snippets.sniff_secrets(all_snippets)
             log_related_snippets(all_snippets, [group_projects, personal_projects])
             log_all_secrets(all_secrets, all_snippets)
 
-        if issues:
+        if args.issues:
             all_issues = gitlab_issues.all_issues(group)
             log_related_issues(all_issues, group)
 
