@@ -1,13 +1,11 @@
 
 from logging import info, warning
 
-from api import gitlab_groups, gitlab_projects, gitlab_snippets, gitlab_members
+from api import gitlab_groups, gitlab_projects, gitlab_snippets, gitlab_members, gitlab_issues
 
 
-def process_all(groups, snippets):
+def process_all(groups, snippets, issues):
     personal_projects = {}
-    all_snippets = {}
-    all_secrets = {}
 
     for group in groups:
         group_details = gitlab_groups.get_group(group)
@@ -21,18 +19,22 @@ def process_all(groups, snippets):
         for member in members:
             personal_projects.update(gitlab_projects.all_member_projects(member))
 
-        if snippets:
-            all_snippets = gitlab_snippets.all_snippets([group_projects, personal_projects])
-            all_secrets = gitlab_snippets.sniff_secrets(all_snippets)
-
-        # Print / log all the gorey details
+        # Print / log all the gorey details for groups and members
         log_group(group_details)
         log_projects(group_projects)
         log_members(members)
         log_members_projects(personal_projects)
+
+        # Go get the snippets content and log it if the switch is provided
         if snippets:
+            all_snippets = gitlab_snippets.all_snippets([group_projects, personal_projects])
+            all_secrets = gitlab_snippets.sniff_secrets(all_snippets)
             log_related_snippets(all_snippets, [group_projects, personal_projects])
             log_all_secrets(all_secrets, all_snippets)
+
+        if issues:
+            all_issues = gitlab_issues.all_issues(group)
+            log_related_issues(all_issues, group)
 
 
 def get_total_projects(projects):
@@ -49,6 +51,12 @@ def log_all_secrets(all_secrets, all_snippets):
     info("  FOUND (%s) SECRET(S) IN (%s) TOTAL SNIPPET(S)", len(all_secrets), len(all_snippets))
     for secret in all_secrets:
         info("    Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
+
+
+def log_related_issues(issues, group):
+    info("  FOUND (%s) TOTAL ISSUE(S) FOR GROUP (%s)", len(issues), group)
+    for value in issues.values():
+        info("    %s", value)
 
 
 def log_related_snippets(snippets, projects):
