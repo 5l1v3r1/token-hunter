@@ -6,7 +6,6 @@ from api import gitlab_groups, gitlab_projects, gitlab_snippets, gitlab_members,
 
 def process_all(args):
     personal_projects = {}
-    info(args)
     for group in args.group:
         group_details = gitlab_groups.get_group(group)
         if len(group_details) == 0:
