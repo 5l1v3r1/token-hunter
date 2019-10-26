@@ -32,11 +32,12 @@ def process_all(args):
             all_snippets = gitlab_snippets.all_snippets([group_projects, personal_projects])
             all_secrets = gitlab_snippets.sniff_secrets(all_snippets)
             log_related_snippets(all_snippets, [group_projects, personal_projects])
-            log_all_secrets(all_secrets, all_snippets)
+            log_snippet_secrets(all_secrets, all_snippets)
 
         if args.issues:
             all_issues = gitlab_issues.all_issues(group)
-            log_related_issues(all_issues, group)
+            all_secrets = gitlab_issues.sniff_secrets(all_issues)
+            log_issue_secrets(all_secrets, all_issues)
 
 
 def get_total_projects(projects):
@@ -47,7 +48,15 @@ def get_total_projects(projects):
     return cnt
 
 
-def log_all_secrets(all_secrets, all_snippets):
+def log_issue_secrets(secrets, issues):
+    if len(secrets) == 0:
+        return
+    info("  FOUND (%s) SECRET(S) IN (%s) TOTAL ISSUE(S)", len(secrets), len(issues))
+    for secret in secrets:
+        info("    Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
+
+
+def log_snippet_secrets(all_secrets, all_snippets):
     if len(all_snippets) == 0:
         return
     info("  FOUND (%s) SECRET(S) IN (%s) TOTAL SNIPPET(S)", len(all_secrets), len(all_snippets))
@@ -55,16 +64,8 @@ def log_all_secrets(all_secrets, all_snippets):
         info("    Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
 
 
-def log_related_issues(issues, group):
-    info("  FOUND (%s) TOTAL ISSUE(S) FOR GROUP (%s)", len(issues), group)
-    for value in issues.values():
-        info("    %s", value)
-
-
 def log_related_snippets(snippets, projects):
     info("  FOUND (%s) SNIPPET(S) IN (%s) TOTAL PROJECT(S)", len(snippets), get_total_projects(projects))
-    for value in snippets.values():
-        info("    %s", value)
 
 
 def log_group(group_details):
