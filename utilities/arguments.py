@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from osint_tools import gitlab_checks
+from gitlab import checks
 
 
 def parse():
@@ -31,4 +31,4 @@ def parse():
 
 def apply_all(args):
     if args.group:
-        gitlab_checks.process_all(args)
+        checks.process_all(args)

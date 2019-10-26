@@ -1,4 +1,3 @@
-
 from logging import info, warning
 
 from api import gitlab_groups, gitlab_projects, gitlab_snippets, gitlab_members, gitlab_issues
