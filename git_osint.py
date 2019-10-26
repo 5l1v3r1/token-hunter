@@ -2,12 +2,12 @@
 import datetime
 
 from logging import info
-from utilities import time, identity, validate, types, arguments
+from utilities import time, identity, validate, log, arguments
 
 
 def main():
     args = arguments.parse()
-    types.Logger(args.logfile)
+    log.configure(args.logfile)
     validate.environment()
 
     if args.timestamp:
