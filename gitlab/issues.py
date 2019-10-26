@@ -5,12 +5,7 @@ from utilities import types
 
 def all_issues(group):
     issues = {}
-    info("[*] Fetching issues for group %s", group)
     details = gitlab.get_issues(group)
-    if len(details) > 0:
-        info("[*] Found %s issues for group %s", len(details), group)
-    else:
-        info("[*] No snippets found for group %s", group)
     for item in details:
         issues.update({item['id']: item['description']})
 

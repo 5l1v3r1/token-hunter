@@ -5,15 +5,9 @@ from utilities import types
 
 def all_snippets(projects):
     snippets = {}
-
     for project in projects:
         for key, value in project.items():
-            info("[*] Fetching snippets for project %s", value)
             details = gitlab.get_project_snippets(key)
-            if len(details) > 0:
-                info("[*] Found %s snippets for project %s", len(details), value)
-            else:
-                info("[*] No snippets found for group %s", value)
             for item in details:
                 snippets.update({item['id']: item['web_url']})
     return snippets

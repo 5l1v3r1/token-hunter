@@ -28,12 +28,14 @@ def process_all(args):
 
         # Go get the snippets content and log it if the switch is provided
         if args.snippets:
+            info("[*] Fetching snippets for %s projects", get_total_projects([group_projects, personal_projects]))
             all_snippets = snippets.all_snippets([group_projects, personal_projects])
             all_secrets = snippets.sniff_secrets(all_snippets)
             log_related_snippets(all_snippets, [group_projects, personal_projects])
             log_snippet_secrets(all_secrets, all_snippets)
 
         if args.issues:
+            info("[*] Fetching issues for group %s", args.group)
             all_issues = issues.all_issues(group)
             all_secrets = issues.sniff_secrets(all_issues)
             log_issue_secrets(all_secrets, all_issues)
