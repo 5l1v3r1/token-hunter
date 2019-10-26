@@ -1,7 +1,3 @@
-"""
-Module to support time/date info output
-"""
-
 import datetime
 
 
