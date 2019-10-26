@@ -18,7 +18,7 @@ def parse():
     parser.add_argument('-i', '--issues', action='store_true',
                         help='Searches the issues associated with the group for secrets')
     parser.add_argument('-t', '--timestamp', action='store_true',
-                        help='Appends start/finish times and originating IP to the output')
+                        help='Disables display of start/finish times and originating IP to the output')
     parser.add_argument('-l', '--logfile', type=str, action='store',
                         help='Will APPEND found items to specified file.')
 
