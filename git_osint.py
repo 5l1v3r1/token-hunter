@@ -6,9 +6,6 @@ from utilities import time, identity, validate, log, arguments
 
 
 def main():
-    """
-    Main program function
-    """
     args = arguments.parse()
     log.configure(args.logfile)
     validate.environment()
@@ -19,7 +16,6 @@ def main():
 
     validate.gitlab_api_keys(args)
 
-    # Run the appropriate checks for each type
     try:
         arguments.apply_all(args)
     except KeyboardInterrupt:
