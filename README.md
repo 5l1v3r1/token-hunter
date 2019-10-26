@@ -39,21 +39,27 @@ pip3 install -r ./requirements.txt
 Then, you can run the tool as follows:
 
 ``` 
-usage: git_osint.py [-h] -g GROUP [-s] [-t] [-l LOGFILE]
+usage: git_osint.py [-h] -g GROUP [-m] [-s] [-i] [-t] [-l LOGFILE]
 
 Collect OSINT for GitLab Groups, Projects, Members, and Snippets
 
 optional arguments:
   -h, --help            show this help message and exit
+  -m, --members         Searches for group members' personal projects and
+                        includes them in searches designated by other switches
   -s, --snippets        Searches the snippets associated with projects the
                         group maintains for secrets
-  -t, --timestamp       Appends start/finish times to the output
+  -i, --issues          Searches the issues associated with the group for
+                        secrets
+  -t, --timestamp       Disables display of start/finish times and originating
+                        IP to the output
   -l LOGFILE, --logfile LOGFILE
                         Will APPEND found items to specified file.
 
 required arguments:
   -g GROUP, --group GROUP
-                        ID or name of a GitLab group
+                        ID or name of a GitLab group. This option, by itself,
+                        will display group projects and member names only.
 ```
 
 Examples:
