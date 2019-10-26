@@ -1,6 +1,17 @@
 import json
 import os
 import re
+import logging
+import sys
+
+
+class Logger:
+    def __init__(self, logfile):
+        logging.basicConfig(format='%(message)s', level=logging.INFO, stream=sys.stdout)
+
+        # Add a logging handler for a file, if the user provides one
+        if logfile:
+            logging.getLogger().addHandler(logging.FileHandler(logfile))
 
 
 class Secret:
