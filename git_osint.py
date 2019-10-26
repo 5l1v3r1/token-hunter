@@ -21,6 +21,8 @@ def main():
     except KeyboardInterrupt:
         info("[!] Keyboard Interrupt, abandon ship!")
 
+    info("[*] Complete...")
+
     if args.timestamp:
         info("##### Git_OSINT finished at UTC %s ##### ", time.get_current(datetime.timezone.utc))
 
