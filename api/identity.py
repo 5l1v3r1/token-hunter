@@ -1,6 +1,3 @@
-"""
-Module to support identity info output
-"""
 import requests
 
 

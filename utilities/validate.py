@@ -9,9 +9,6 @@ from api import gitlab
 
 
 def gitlab_api_keys(args):
-    """
-    Tests GitLab API authentication prior to continuing
-    """
     username = gitlab.get_current_user()
     if not username:
         warning("[!] Cannot validate GitLab API key.")

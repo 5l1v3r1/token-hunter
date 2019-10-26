@@ -8,6 +8,10 @@ from logging import error, info
 BASE_URL = 'https://gitlab.com/api/v4'
 
 
+def get_issues(group_id):
+    return get('{}/groups/{}/issues'.format(BASE_URL, group_id))
+
+
 def get_project_snippets(project):
     return get('{}/projects/{}/snippets'.format(BASE_URL, project))
 
