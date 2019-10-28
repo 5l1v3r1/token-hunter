@@ -1,5 +1,5 @@
 from api import gitlab
-from logging import info, warning
+from logging import info
 
 
 def all_group_projects(group):
