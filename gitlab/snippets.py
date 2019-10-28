@@ -1,5 +1,4 @@
 from api import gitlab
-from logging import info
 from utilities import types
 
 
@@ -11,10 +10,6 @@ def all_snippets(projects):
             for item in details:
                 snippets.update({item['id']: item['web_url']})
     return snippets
-
-
-def get_snippet_raw(snippet_id):
-    return gitlab.get_snippet_raw(snippet_id)
 
 
 def sniff_secrets(snippets):
