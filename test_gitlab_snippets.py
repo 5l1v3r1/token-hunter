@@ -1,23 +1,30 @@
 import textwrap
 from utilities import types
 
+test_url = "https://www.test.com/api/v1/test"
+
 
 def test_handles_empty_string():
     target = types.SecretsMonitor()
-    content = ""
-    assert target.get_secrets(content) == {}
+    content = {test_url: ""}
+    assert target.sniff_secrets(content) == []
 
 
 def test_handles_nil():
     target = types.SecretsMonitor()
-    content = None
-    assert target.get_secrets(content) == {}
+    content = {test_url: None}
+    assert target.sniff_secrets(content) == []
 
 
 def test_finds_simple_json_gitlab_pat():
     target = types.SecretsMonitor()
-    content = "API_KEY:a8pt01843901sdf0-a_1"
-    assert target.get_secrets(content) == {"GitLab PAT": ":a8pt01843901sdf0-a_1"}
+
+    content = {test_url: "API_KEY:a8pt01843901sdf0-a_1"}
+    actual = target.sniff_secrets(content)
+    assert len(actual) == 1
+    assert actual[0].url == test_url
+    assert actual[0].secret == ":a8pt01843901sdf0-a_1"
+    assert actual[0].secret_type == "GitLab PAT"
 
 
 def test_regexes_are_loaded():
@@ -28,7 +35,7 @@ def test_regexes_are_loaded():
 
 def test_finds_gitlab_pat_in_text_block():
     target = types.SecretsMonitor()
-    content = textwrap.dedent("""\
+    content = {test_url: textwrap.dedent("""\
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
             
@@ -61,19 +68,28 @@ def test_finds_gitlab_pat_in_text_block():
                     }
                 }
             }
-        """)
-    assert target.get_secrets(content) == {"GitLab PAT": '"-1a890cm-kforemg980='}
+        """)}
+    actual = target.sniff_secrets(content)
+    assert len(actual) == 1
+    assert actual[0].secret == '"-1a890cm-kforemg980='
+    assert actual[0].url == test_url
+    assert actual[0].secret_type == "GitLab PAT"
 
 
 def test_finds_naked_slack_token():
     target = types.SecretsMonitor()
-    content = "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
-    assert target.get_secrets(content) == {"Slack Token": content}
+    naked_token = "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
+    content = {test_url: naked_token}
+    actual = target.sniff_secrets(content)
+    assert len(actual) == 1
+    assert actual[0].url == test_url
+    assert actual[0].secret == naked_token
+    assert actual[0].secret_type == "Slack Token"
 
 
 def test_finds_ambiguous_tokens_in_text_block():
     target = types.SecretsMonitor()
-    content = textwrap.dedent("""\
+    content = {test_url: textwrap.dedent("""\
         import enum
         import os
         
@@ -90,28 +106,32 @@ def test_finds_ambiguous_tokens_in_text_block():
         
         
         # The fun part goes here
-    """)
-    assert target.get_secrets(content) == {
-        "Slack Token": "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1",
-        "GitLab PAT": '"xoxp-912111665212-11'
-    }
+    """)}
+    actual = target.sniff_secrets(content)
+    assert len(actual) == 2
+    assert actual[0].secret_type == "GitLab PAT"
+    assert actual[0].url == test_url
+    assert actual[0].secret == '"xoxp-912111665212-11'
+    assert actual[1].secret_type == "Slack Token"
+    assert actual[1].url == test_url
+    assert actual[1].secret == "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
 
 
 def test_finds_single_group_results():
     target = types.SecretsMonitor()
-    content = textwrap.dedent("""\
+    content = {test_url: textwrap.dedent("""\
             -----BEGIN RSA PRIVATE KEY-----
             asdfjwpoidnsohfohoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
             -----END RSA PRIVATE KEY-----
-        """)
-    assert len(target.get_secrets(content)) == 1
+        """)}
+    assert len(target.sniff_secrets(content)) == 1
 
 
 def test_finds_openssh_private_key():
     target = types.SecretsMonitor()
-    content = textwrap.dedent("""\
+    content = {test_url: textwrap.dedent("""\
                     -----BEGIN OPENSSH PRIVATE KEY-----
                     asdfjwpoidnsohfohoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
                     -----END OPENSSH PRIVATE KEY-----"
-                """)
-    assert len(target.get_secrets(content)) == 1
+                """)}
+    assert len(target.sniff_secrets(content)) == 1

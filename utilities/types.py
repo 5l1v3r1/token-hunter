@@ -18,7 +18,17 @@ class SecretsMonitor:
         for key in self.regexes:
             self.regexes[key] = re.compile(self.regexes[key])
 
-    def get_secrets(self, content):
+    def sniff_secrets(self, content):
+        if len(content.keys()) == 0:
+            return []
+        secrets = []
+        for content_url, raw_data in content.items():
+            found_secrets = self.__get_secrets(raw_data)
+            for secret_type, secret in found_secrets.items():
+                secrets.append(Secret(secret_type, secret, content_url))
+        return secrets
+
+    def __get_secrets(self, content):
         result = {}
         if not content:
             return result
