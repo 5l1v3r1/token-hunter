@@ -21,7 +21,7 @@ def sniff_secrets(snippets):
     if len(snippets.keys()) == 0:
         return []
     secrets = []
-    monitor = types.GitLabSnippetMonitor()
+    monitor = types.SecretsMonitor()
     for snippet_id, snippet_url in snippets.items():
         raw_content = gitlab.get_snippet_raw(snippet_id)
         found_secrets = monitor.get_secrets(raw_content)

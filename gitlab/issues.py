@@ -1,5 +1,4 @@
 from api import gitlab
-from logging import info
 from utilities import types
 
 
@@ -16,7 +15,7 @@ def sniff_secrets(issues):
     if len(issues.keys()) == 0:
         return []
     secrets = []
-    monitor = types.GitLabSnippetMonitor()
+    monitor = types.SecretsMonitor()
     for issue_id, description in issues.items():
         found_secrets = monitor.get_secrets(description)
         for secret_type, secret in found_secrets.items():

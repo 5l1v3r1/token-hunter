@@ -10,7 +10,7 @@ class Secret:
         self.secret = secret
 
 
-class GitLabSnippetMonitor:
+class SecretsMonitor:
 
     def __init__(self):
         with open(os.path.join(os.path.dirname(__file__), "../regexes.json"), 'r') as f:
