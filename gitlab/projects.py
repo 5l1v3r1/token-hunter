@@ -5,7 +5,7 @@ from logging import info
 def all_group_projects(group):
     group_projects = {}
 
-    info("[*] Fetching projects from group %s")
+    info("[*] Fetching projects from group %s", group)
     details = gitlab.get_group_projects(group)
     if len(details) > 0:
         info("[*] Found %s projects for group %s", len(details), group)
