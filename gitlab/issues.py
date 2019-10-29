@@ -3,10 +3,10 @@ from utilities import types
 
 
 def all_issues(group):
-    issues = {}
+    issues = []
     details = gitlab.get_issues(group)
     for item in details:
-        issues.update({item['web_url']: item['description']})
+        issues.append(types.Issue(item['id'], item['web_url'], item['description']))
     return issues
 
 

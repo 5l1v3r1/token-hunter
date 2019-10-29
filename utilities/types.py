@@ -3,6 +3,13 @@ import os
 import re
 
 
+class Issue:
+    def __init__(self, ident, web_url, description):
+        self.ident = ident
+        self.web_url = web_url
+        self.description = description
+
+
 class Secret:
     def __init__(self, secret_type, secret, url):
         self.secret_type = secret_type

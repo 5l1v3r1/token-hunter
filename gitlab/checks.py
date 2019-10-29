@@ -37,7 +37,11 @@ def process_all(args):
         if args.issues:
             info("[*] Fetching issues for group %s", group)
             all_issues = issues.all_issues(group)
-            all_secrets = issues.sniff_secrets(all_issues)
+            all_secrets = []
+            for issue in all_issues:
+                secrets = issues.sniff_secrets({issue.web_url: issue.description})
+                for secret in secrets:
+                    all_secrets.append(secret)
             log_related_issues(all_issues, [group_projects, personal_projects])
             log_issue_secrets(all_secrets, all_issues)
 
