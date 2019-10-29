@@ -16,10 +16,13 @@ def sniff_secrets(snippets):
     if len(snippets.keys()) == 0:
         return []
     secrets = []
-    monitor = types.SecretsMonitor()
+    raw_data = {}
     for snippet_id, snippet_url in snippets.items():
         raw_content = gitlab.get_snippet_raw(snippet_id)
-        found_secrets = monitor.get_secrets(raw_content)
-        for secret_type, secret in found_secrets.items():
-            secrets.append(types.Secret(secret_type, secret, snippet_url))
+        raw_data.update({snippet_url: raw_content})
+    if len(raw_data) > 0:
+        monitor = types.SecretsMonitor()
+        found_secrets = monitor.sniff_secrets(raw_data)
+        if len(found_secrets) > 0:
+            secrets.append(found_secrets)
     return secrets
