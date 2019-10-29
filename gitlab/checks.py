@@ -35,9 +35,10 @@ def process_all(args):
             log_snippet_secrets(all_secrets, all_snippets)
 
         if args.issues:
-            info("[*] Fetching issues for group %s", args.group)
+            info("[*] Fetching issues for group %s", group)
             all_issues = issues.all_issues(group)
             all_secrets = issues.sniff_secrets(all_issues)
+            log_related_issues(all_issues, [group_projects, personal_projects])
             log_issue_secrets(all_secrets, all_issues)
 
 
@@ -60,13 +61,17 @@ def log_issue_secrets(secrets, all_issues):
 def log_snippet_secrets(all_secrets, all_snippets):
     if len(all_snippets) == 0:
         return
-    info("  FOUND (%s) SECRET(S) IN (%s) TOTAL SNIPPET(S)", len(all_secrets), len(all_snippets))
+    info("    FOUND (%s) SECRET(S) IN (%s) TOTAL SNIPPET(S)", len(all_secrets), len(all_snippets))
     for secret in all_secrets:
-        info("    Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("      Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
+
+
+def log_related_issues(all_issues, all_projects):
+    info("  ISSUES (%s) IN PROJECTS (%s)", len(all_issues), get_total_projects(all_projects))
 
 
 def log_related_snippets(all_snippets, all_projects):
-    info("  FOUND (%s) SNIPPET(S) IN (%s) TOTAL PROJECT(S)", len(all_snippets), get_total_projects(all_projects))
+    info("  SNIPPETS (%s) IN PROJECTS (%s)", len(all_snippets), get_total_projects(all_projects))
 
 
 def log_group(group_details):
