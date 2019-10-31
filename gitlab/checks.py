@@ -39,22 +39,23 @@ def process_all(args):
             all_issues = []
             all_comments = []
             all_secrets = []
+            # loop each project (personal or group)
             for project_id, project_url in all_projects.items():
+                # loop each issue in the project and search for secrets in the description
                 project_issues = issues.get_all(project_id)
                 for issue in project_issues:
                     all_issues.append(issue)
-                for issue in all_issues:
                     secrets = issues.sniff_secrets(issue)
                     for secret in secrets:
                         all_secrets.append(secret)
-                for issue in project_issues:
+                    # loop the comments for each issue searching for secrets in the body
                     comments = issue_comments.get_all(project_id, issue.ident, issue.web_url)
                     for comment in comments:
                         all_comments.append(comment)
-                for comment in all_comments:
-                    secrets = issue_comments.sniff_secrets(comment)
-                    for secret in secrets:
-                        all_secrets.append(secret)
+                        secrets = issue_comments.sniff_secrets(comment)
+                        for secret in secrets:
+                            all_secrets.append(secret)
+
             log_related_issues_comments(all_issues, all_comments, all_projects)
             log_issue_comment_secrets(all_secrets, all_issues, all_comments)
 
