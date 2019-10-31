@@ -2,7 +2,7 @@ from api import gitlab
 from utilities import types
 
 
-def all_comments(project_id, issue_id):
+def get_all(project_id, issue_id):
     comments = []
     detail = gitlab.get_issue_comments(project_id, issue_id)
     for item in detail:

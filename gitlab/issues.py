@@ -2,7 +2,7 @@ from api import gitlab
 from utilities import types
 
 
-def all_issues(project_id):
+def get_all(project_id):
     issues = []
     details = gitlab.get_issues(project_id)
     for item in details:

@@ -6,13 +6,13 @@ from gitlab import projects, snippets, groups, issues, members, issue_comments
 def process_all(args):
     personal_projects = {}
     for group in args.group:
-        group_details = groups.get_group(group)
+        group_details = groups.get(group)
         if len(group_details) == 0:
             warning("[!] %s not found, skipping", group)
             continue
 
         group_projects = projects.all_group_projects(group)
-        all_members = members.all_members(group)
+        all_members = members.get_all(group)
 
         if args.members:
             for member in all_members:
@@ -27,21 +27,20 @@ def process_all(args):
         if args.members:
             log_members_projects(personal_projects)
 
-        # Go get the snippets content and log it if the switch is provided
         if args.snippets:
             info("[*] Fetching snippets for %s projects", len(all_projects))
-            all_snippets = snippets.all_snippets([group_projects, personal_projects])
+            all_snippets = snippets.get_all([group_projects, personal_projects])
             all_secrets = snippets.sniff_secrets(all_snippets)
             log_related_snippets(all_snippets, [group_projects, personal_projects])
             log_snippet_secrets(all_secrets, all_snippets)
 
         if args.issues:
-            info("[*] Fetching issues for all projects")
+            info("[*] Fetching issues & comments for all projects")
             all_issues = []
             all_comments = []
             all_secrets = []
             for project_id, project_url in all_projects.items():
-                project_issues = issues.all_issues(project_id)
+                project_issues = issues.get_all(project_id)
                 for issue in project_issues:
                     all_issues.append(issue)
                 for issue in all_issues:
@@ -49,7 +48,7 @@ def process_all(args):
                     for secret in secrets:
                         all_secrets.append(secret)
                 for issue in project_issues:
-                    comments = issue_comments.all_comments(project_id, issue.ident)
+                    comments = issue_comments.get_all(project_id, issue.ident)
                     if len(comments) > 0:
                         all_comments.append(comments)
             log_related_issues(all_issues, all_projects)

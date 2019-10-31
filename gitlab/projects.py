@@ -2,6 +2,7 @@ from api import gitlab
 from logging import info
 
 
+# move to gitlab/groups
 def all_group_projects(group):
     group_projects = {}
 
@@ -15,6 +16,7 @@ def all_group_projects(group):
     return group_projects
 
 
+# move to gitlab/members
 def all_member_projects(member):
     personal_projects = {}
     details = gitlab.get_personal_projects(member)

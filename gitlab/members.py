@@ -2,7 +2,7 @@ from api import gitlab
 from logging import info
 
 
-def all_members(group):
+def get_all(group):
     members = []
 
     info("[*] Fetching all members for group %s", group)

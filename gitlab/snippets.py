@@ -2,7 +2,7 @@ from api import gitlab
 from utilities import types
 
 
-def all_snippets(projects):
+def get_all(projects):
     snippets = {}
     for project in projects:
         for key, value in project.items():
