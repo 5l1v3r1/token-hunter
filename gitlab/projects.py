@@ -1,23 +1,22 @@
 from api import gitlab
-from logging import info, warning
+from logging import info
 
 
+# move to gitlab/groups
 def all_group_projects(group):
     group_projects = {}
 
-    info("[*] Fetching projects from group %s")
+    info("[*] Fetching projects from group %s", group)
     details = gitlab.get_group_projects(group)
-    if len(details) > 0:
-        info("[*] Found %s projects for group %s", len(details), group)
-    else:
-        info("[*] No projects found for group %s", group)
+    info("[*] Found %s projects for group %s", len(details), group)
 
     for item in details:
-        group_projects[item['id']] = item['http_url_to_repo']
+        group_projects.update({item['id']: item['http_url_to_repo']})
 
     return group_projects
 
 
+# move to gitlab/members
 def all_member_projects(member):
     personal_projects = {}
     details = gitlab.get_personal_projects(member)

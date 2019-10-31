@@ -1,36 +1,28 @@
 from api import gitlab
-from logging import info
 from utilities import types
 
 
-def all_snippets(projects):
+def get_all(projects):
     snippets = {}
-
     for project in projects:
         for key, value in project.items():
-            info("[*] Fetching snippets for project %s", value)
             details = gitlab.get_project_snippets(key)
-            if len(details) > 0:
-                info("[*] Found %s snippets for project %s", len(details), value)
-            else:
-                info("[*] No snippets found for group %s", value)
             for item in details:
                 snippets.update({item['id']: item['web_url']})
     return snippets
-
-
-def get_snippet_raw(snippet_id):
-    return gitlab.get_snippet_raw(snippet_id)
 
 
 def sniff_secrets(snippets):
     if len(snippets.keys()) == 0:
         return []
     secrets = []
-    monitor = types.GitLabSnippetMonitor()
+    raw_data = {}
     for snippet_id, snippet_url in snippets.items():
         raw_content = gitlab.get_snippet_raw(snippet_id)
-        found_secrets = monitor.get_secrets(raw_content)
-        for secret_type, secret in found_secrets.items():
-            secrets.append(types.Secret(secret_type, secret, snippet_url))
+        raw_data.update({snippet_url: raw_content})
+    if len(raw_data) > 0:
+        monitor = types.SecretsMonitor()
+        found_secrets = monitor.sniff_secrets(raw_data)
+        if len(found_secrets) > 0:
+            secrets.append(found_secrets)
     return secrets

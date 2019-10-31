@@ -1,17 +1,14 @@
 # Git_OSINT
 
-Git_OSINT can be used to gather intelligence from groups and projects hosted on GitLab. The information gathered may be 
-useful to feed into additional tools such as [TruffleHog](https://github.com/dxa4481/truffleHog) 
-or [GitRob](https://github.com/michenriksen/gitrob).
-
-The idea is that a contributor may commit sensitive data to their own personal projects, which are not watched as 
-closely as the primary shared projects they are working on.
-
-Currently, secrets detection is performed for GitLab snippets only by adding the `-s` switch documented below.
+Collect OSINT for GitLab groups and members. You can optionally search the group and
+group members snippets, issues, and issue comments for sensitive data that may be included in these assets. 
+The information gathered is intended to compliment and inform the use of additional tools such as 
+[TruffleHog](https://github.com/dxa4481/truffleHog) or [GitRob](https://github.com/michenriksen/gitrob), which search
+git history in the same way.
 
 # How it Works
 
-You provide a starting point, like a group ID on GitLab. This tool will use the appropriate API to find all projects, 
+You provide a starting point, like a group ID on GitLab. Git_OSINT will use the appropriate API to find all projects, 
 users and snippets associated with that starting point, and enumerate git projects and they own or contribute to and 
 will list all the snippets associated with each project in the group. In addition, if you provide the `-s` switch, all
 [GitLab Snippets](https://docs.gitlab.com/ee/user/snippets.html) associated with each project in the group will be 
@@ -41,16 +38,17 @@ Then, you can run the tool as follows:
 ``` 
 usage: git_osint.py [-h] -g GROUP [-m] [-s] [-i] [-t] [-l LOGFILE]
 
-Collect OSINT for GitLab Groups, Projects, Members, and Snippets
+Collect OSINT for GitLab groups and members. Optionally search the group and
+group members snippets, issues, and issue comments for sensitive data.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -m, --members         Searches for group members' personal projects and
-                        includes them in searches designated by other switches
+  -m, --members         Includes group members personal projects, snippets,
+                        issues, and issue comments in the search for secrets
   -s, --snippets        Searches the snippets associated with projects the
                         group maintains for secrets
-  -i, --issues          Searches the issues associated with the group for
-                        secrets
+  -i, --issues          Searches the issues and related comments associated
+                        with the group for secrets
   -t, --timestamp       Disables display of start/finish times and originating
                         IP to the output
   -l LOGFILE, --logfile LOGFILE
@@ -58,19 +56,20 @@ optional arguments:
 
 required arguments:
   -g GROUP, --group GROUP
-                        ID or name of a GitLab group. This option, by itself,
-                        will display group projects and member names only.
+                        ID or URL encoded name of a GitLab group. This option,
+                        by itself, will display group projects and member
+                        names only.
 ```
 
-Examples:
-`./git_osint.py -g <123456>` 
-Runs Git OSINT for the group specified, dumping the URLs for each project maintained by the group as well as all project
-URLs for the members in that group.
+Example:  `./git_osint.py -gmsi <123456>`
 
-`./git_osint.py -g <123456> -s` 
-Same as above with one functional addition. The `-s` switch will tell the application to search for all 
-[GitLab Snippets](https://docs.gitlab.com/ee/user/snippets.html) associated with each project the group maintains, as
-well as snippets for each personal project maintained by members of the group.
+Runs Git_OSINT for group with ID 123456.  You can find the group ID for any group just underneath its name when viewing
+a group in the UI.  The `-m` switch tells Git_OSINT to also dump information on any personal projects maintained by the
+ members of that group.  The `-s` switch tells Git_OSINT to search the 
+[snippets](https://docs.gitlab.com/ee/user/snippets.html) maintained by the group and, since `-m` was provided, 
+the groups members.  The `-i` switch also tells Git_OSINT to search the 
+[issues](https://docs.gitlab.com/ee/user/project/issues/) entered by the group and, since `-m` was
+provided, the issues on any of the group members personal projects for sensitive data.
 
 # Project Status
 
