@@ -31,7 +31,7 @@ def process_all(args):
             info("[*] Fetching snippets for %s projects", len(all_projects))
             all_snippets = snippets.get_all([group_projects, personal_projects])
             all_secrets = snippets.sniff_secrets(all_snippets)
-            log_related_snippets(all_snippets, [group_projects, personal_projects])
+            log_related_snippets(all_snippets, all_projects)
             log_snippet_secrets(all_secrets, all_snippets)
 
         if args.issues:
@@ -51,33 +51,28 @@ def process_all(args):
                     comments = issue_comments.get_all(project_id, issue.ident)
                     if len(comments) > 0:
                         all_comments.append(comments)
-            log_related_issues(all_issues, all_projects)
-            log_issue_secrets(all_secrets, all_issues)
-            log_related_comments(all_secrets, all_comments)
+            log_related_issues_comments(all_issues, all_comments, all_projects)
+            log_issue_comment_secrets(all_secrets, all_issues, all_comments)
 
 
-def log_issue_secrets(secrets, all_issues):
-    info("  FOUND (%s) SECRET(S) IN (%s) TOTAL ISSUE(S)", len(secrets), len(all_issues))
+def log_issue_comment_secrets(secrets, all_issues, all_comments):
+    info("   FOUND %s SECRETS IN %s TOTAL ISSUES & COMMENTS", len(secrets), len(all_issues) + len(all_comments))
     for secret in secrets:
-        info("    Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("     Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
 
 
 def log_snippet_secrets(all_secrets, all_snippets):
-    info("    FOUND (%s) SECRET(S) IN (%s) TOTAL SNIPPET(S)", len(all_secrets), len(all_snippets))
+    info("   FOUND %s SECRETS IN %s TOTAL SNIPPETS", len(all_secrets), len(all_snippets))
     for secret in all_secrets:
-        info("      Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("       Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
 
 
-def log_related_comments(all_issue_comments, all_issues):
-    info("  COMMENTS (%s) IN ISSUES (%s)", len(all_issue_comments), len(all_issues))
-
-
-def log_related_issues(all_issues, all_projects):
-    info("  ISSUES (%s) IN PROJECTS (%s)", len(all_issues), len(all_projects))
+def log_related_issues_comments(all_issues, all_comments, all_projects):
+    info("  FOUND %s ISSUES AND %s COMMENTS ACROSS %s PROJECTS", len(all_issues), len(all_comments), len(all_projects))
 
 
 def log_related_snippets(all_snippets, all_projects):
-    info("  SNIPPETS (%s) IN PROJECTS (%s)", len(all_snippets), len(all_projects))
+    info("  FOUND %s SNIPPETS ACROSS %s TOTAL PROJECTS", len(all_snippets), len(all_projects))
 
 
 def log_group(group_details):
