@@ -17,8 +17,6 @@ def parse():
                         help='Searches the snippets associated with projects the group maintains for secrets')
     parser.add_argument('-i', '--issues', action='store_true',
                         help='Searches the issues associated with the group for secrets')
-    parser.add_argument('-c', '--comments', action='store_true',
-                        help='Searches the comments for each issue for secrets')
     parser.add_argument('-t', '--timestamp', action='store_true',
                         help='Disables display of start/finish times and originating IP to the output')
     parser.add_argument('-l', '--logfile', type=str, action='store',
@@ -27,11 +25,6 @@ def parse():
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         sys.exit(1)
-
-    args = parser.parse_args()
-
-    if args.comments and not args.issues:
-        parser.error("The --comments argument requires --issues as well (-ic for example).")
 
     return parser.parse_args()
 

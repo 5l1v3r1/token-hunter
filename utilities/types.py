@@ -10,6 +10,13 @@ class Issue:
         self.description = description
 
 
+class Comment:
+    def __init__(self, comment_type, parent_url, comment_body):
+        self.comment_type = comment_type
+        self.comment_body = comment_body
+        self.parent_url = parent_url
+
+
 class Secret:
     def __init__(self, secret_type, secret, url):
         self.secret_type = secret_type

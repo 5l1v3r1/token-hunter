@@ -3,13 +3,17 @@ from logging import warning
 import os
 import re
 import requests
-from logging import error, info
+from logging import error
 
 BASE_URL = 'https://gitlab.com/api/v4'
 
 
-def get_issues(group_id):
-    return get('{}/groups/{}/issues'.format(BASE_URL, group_id))
+def get_issue_comments(project_id, issue_id):
+    return get('{}/projects/{}/issues/{}/discussions'.format(BASE_URL, project_id, issue_id))
+
+
+def get_issues(project_id):
+    return get('{}/projects/{}/issues'.format(BASE_URL, project_id))
 
 
 def get_project_snippets(project):

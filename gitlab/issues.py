@@ -2,11 +2,11 @@ from api import gitlab
 from utilities import types
 
 
-def all_issues(group):
+def all_issues(project_id):
     issues = []
-    details = gitlab.get_issues(group)
+    details = gitlab.get_issues(project_id)
     for item in details:
-        issues.append(types.Issue(item['id'], item['web_url'], item['description']))
+        issues.append(types.Issue(item['iid'], item['web_url'], item['description']))
     return issues
 
 
