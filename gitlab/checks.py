@@ -44,11 +44,11 @@ def process_all(args):
                 for issue in project_issues:
                     all_issues.append(issue)
                 for issue in all_issues:
-                    secrets = issues.sniff_secrets({issue.web_url: issue.description})
+                    secrets = issues.sniff_secrets(issue)
                     for secret in secrets:
                         all_secrets.append(secret)
                 for issue in project_issues:
-                    comments = issue_comments.get_all(project_id, issue.ident)
+                    comments = issue_comments.get_all(project_id, issue.ident, issue.web_url)
                     for comment in comments:
                         all_comments.append(comment)
                 for comment in all_comments:

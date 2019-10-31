@@ -10,8 +10,6 @@ def get_all(project_id):
     return issues
 
 
-def sniff_secrets(issues):
-    if len(issues.keys()) == 0:
-        return []
+def sniff_secrets(issue):
     monitor = types.SecretsMonitor()
-    return monitor.sniff_secrets(issues)
+    return monitor.sniff_secrets({issue.web_url: issue.description})
