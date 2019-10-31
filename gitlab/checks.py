@@ -51,6 +51,10 @@ def process_all(args):
                     comments = issue_comments.get_all(project_id, issue.ident)
                     for comment in comments:
                         all_comments.append(comment)
+                for comment in all_comments:
+                    secrets = issue_comments.sniff_secrets(comment)
+                    for secret in secrets:
+                        all_secrets.append(secret)
             log_related_issues_comments(all_issues, all_comments, all_projects)
             log_issue_comment_secrets(all_secrets, all_issues, all_comments)
 

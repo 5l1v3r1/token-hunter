@@ -11,3 +11,10 @@ def get_all(project_id, issue_id):
                 continue
             comments.append(types.Comment('issue', "parent_url_goes_here", note['body']))
     return comments
+
+
+def sniff_secrets(comment):
+    if not comment == 0:
+        return []
+    monitor = types.SecretsMonitor()
+    return monitor.sniff_secrets({comment.parent_url, comment.comment_body})
