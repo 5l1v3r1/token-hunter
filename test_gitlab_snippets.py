@@ -19,18 +19,18 @@ def test_handles_nil():
 def test_finds_simple_json_gitlab_pat():
     target = types.SecretsMonitor()
 
-    content = {test_url: "API_KEY:a8pt01843901sdf0-a_1"}
+    content = {test_url: "private-token:ab123mr980pas453201s"}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
     assert actual[0].url == test_url
-    assert actual[0].secret == ":a8pt01843901sdf0-a_1"
-    assert actual[0].secret_type == "GitLab PAT"
+    assert actual[0].secret == "private-token:ab123mr980pas453201s"
+    assert actual[0].secret_type == "GitLab Personal Access Token, API-style"
 
 
 def test_regexes_are_loaded():
     target = types.SecretsMonitor()
     assert len(target.regexes) > 0
-    assert target.regexes["GitLab PAT"] is not None
+    assert target.regexes["GitLab Personal Access Token, API-style"] is not None
 
 
 def test_finds_gitlab_pat_in_text_block():
@@ -64,16 +64,16 @@ def test_finds_gitlab_pat_in_text_block():
             
                     private static string GetKey(object instance, string caller)
                     {
-                        return "-1a890cm-kforemg980="
+                        return "private-token=asdfkdjfkjalksjdflkj"
                     }
                 }
             }
         """)}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
-    assert actual[0].secret == '"-1a890cm-kforemg980='
+    assert actual[0].secret == 'private-token=asdfkdjfkjalksjdflkj"'
     assert actual[0].url == test_url
-    assert actual[0].secret_type == "GitLab PAT"
+    assert actual[0].secret_type == "GitLab Personal Access Token, API-style"
 
 
 def test_finds_naked_slack_token():
@@ -85,36 +85,6 @@ def test_finds_naked_slack_token():
     assert actual[0].url == test_url
     assert actual[0].secret == naked_token
     assert actual[0].secret_type == "Slack Token"
-
-
-def test_finds_ambiguous_tokens_in_text_block():
-    target = types.SecretsMonitor()
-    content = {test_url: textwrap.dedent("""\
-        import enum
-        import os
-        
-        from aircademy.fields import *
-        from aircademy.filterutils import *
-        from aircademy.record import BaseRecord
-        
-        
-        class GoTCharacterRecord(BaseRecord):
-            class Meta:
-                token: "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
-        
-            # Some other stuff goes here
-        
-        
-        # The fun part goes here
-    """)}
-    actual = target.sniff_secrets(content)
-    assert len(actual) == 2
-    assert actual[0].secret_type == "GitLab PAT"
-    assert actual[0].url == test_url
-    assert actual[0].secret == '"xoxp-912111665212-11'
-    assert actual[1].secret_type == "Slack Token"
-    assert actual[1].url == test_url
-    assert actual[1].secret == "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
 
 
 def test_finds_single_group_results():
