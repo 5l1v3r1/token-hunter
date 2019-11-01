@@ -29,8 +29,11 @@ def process_all(args):
 
         if args.snippets:
             info("[*] Fetching snippets for %s projects", len(all_projects))
+            all_secrets = []
             all_snippets = snippets.get_all([group_projects, personal_projects])
-            all_secrets = snippets.sniff_secrets(all_snippets)
+            secrets_list = snippets.sniff_secrets(all_snippets)
+            for secret in secrets_list:
+                all_secrets.append(secret)
             log_related_snippets(all_snippets, all_projects)
             log_snippet_secrets(all_secrets, all_snippets)
 
