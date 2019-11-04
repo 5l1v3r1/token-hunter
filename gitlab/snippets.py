@@ -23,6 +23,6 @@ def sniff_secrets(snippets):
     if len(raw_data) > 0:
         monitor = types.SecretsMonitor()
         found_secrets = monitor.sniff_secrets(raw_data)
-        if len(found_secrets) > 0:
-            secrets.append(found_secrets)
+        for secret in found_secrets:
+            secrets.append(secret)
     return secrets
