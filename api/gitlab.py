@@ -50,6 +50,16 @@ def get_current_user():
     return username
 
 
+def __get(url):
+    headers = {"PRIVATE-TOKEN": os.getenv("GITLAB_API")}
+    headers.update({"USER-AGENT": "git_osint"})
+    response = requests.get(url, headers=headers)
+    log_rate_limit_info(response.headers["RateLimit-Observed"],
+                        response.headers["RateLimit-Limit"],
+                        response.headers["RateLimit-ResetTime"])
+    return response
+
+
 def get(url):
     """
     Helper function to interact with GitLab API using python requests
@@ -60,11 +70,7 @@ def get(url):
           (https://docs.gitlab.com/ee/api/README.html#pagination)
     """
 
-    headers = {'PRIVATE-TOKEN': os.getenv('GITLAB_API')}
-    response = requests.get(url, headers=headers)
-    log_rate_limit_info(response.headers["RateLimit-Observed"],
-                        response.headers["RateLimit-Limit"],
-                        response.headers["RateLimit-ResetTime"])
+    response = __get(url)
 
     if response.status_code == 200:
         # The "Link" header is returned when there is more than one page of
@@ -84,7 +90,7 @@ def get(url):
                 next_url = re.findall(regex, response.headers['Link'])[0]
 
                 # Add the individual response to the collective
-                response = requests.get(next_url, headers=headers)
+                response = __get(next_url)
                 if response.status_code == 200:
                     all_results += response.json()
                 else:
@@ -107,5 +113,5 @@ def get(url):
 
 
 def log_rate_limit_info(observed, limit, reset_time):
-    if int(observed) >= int(limit):
-        error(f"[!] Rate limit hit ({observed}/{limit})!  Resets time: {reset_time}.")
+    if int(observed) >= int(limit) - 10:
+        error(f"[!] Nearing rate limit ({observed}/{limit})!  Reset time: {reset_time}.")
