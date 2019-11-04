@@ -107,5 +107,5 @@ def get(url):
 
 
 def log_rate_limit_info(observed, limit, reset_time):
-    if int(observed) >= int(limit):
-        error(f"[!] Rate limit hit ({observed}/{limit})!  Resets time: {reset_time}.")
+    if int(observed) <= int(limit - 50):
+        error(f"[!] Nearing rate limit ({observed}/{limit})!  Reset time: {reset_time}.")
