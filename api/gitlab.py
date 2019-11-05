@@ -4,6 +4,7 @@ import os
 import re
 import requests
 from logging import error
+from retry import retry
 
 BASE_URL = 'https://gitlab.com/api/v4'
 
@@ -50,6 +51,7 @@ def get_current_user():
     return username
 
 
+@retry(requests.exceptions.ConnectionError, delay=1, backoff=2, tries=10)
 def __get(url):
     headers = {"PRIVATE-TOKEN": os.getenv("GITLAB_API")}
     headers.update({"USER-AGENT": "git_osint"})
