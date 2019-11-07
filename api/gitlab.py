@@ -4,9 +4,11 @@ import os
 import re
 import requests
 from logging import error
-from utilities import arguments
+from utilities import types
 from retry import retry
 
+
+args = types.Arguments()
 BASE_URL = 'https://gitlab.com/api/v4'
 
 
@@ -53,7 +55,7 @@ def get_current_user():
 
 
 def __get_proxies():
-    proxy_url = arguments.parsed_args.proxy
+    proxy_url = args.proxy
     if not proxy_url:
         return {}
     return {

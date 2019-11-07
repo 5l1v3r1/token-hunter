@@ -1,10 +1,13 @@
 from logging import info, warning
-
+from utilities import types
 from gitlab import projects, snippets, groups, issues, members, issue_comments
 
 
-def process_all(args):
+def analyze():
+
     personal_projects = {}
+    args = types.Arguments()
+
     for group in args.group:
         group_details = groups.get(group)
         if len(group_details) == 0:

@@ -2,7 +2,9 @@ import datetime
 
 from api import identity
 from logging import info
-from utilities import arguments
+from utilities import types
+
+args = types.Arguments()
 
 
 def get_current(timezone):
@@ -11,11 +13,11 @@ def get_current(timezone):
 
 
 def log_time_stamp_start():
-    if not arguments.parsed_args.timestamp:
+    if not args.timestamp:
         info("##### Git_OSINT started at UTC %s from IP %s##### ",
              get_current(datetime.timezone.utc), identity.get_public_ip())
 
 
 def log_time_stamp_end():
-    if not arguments.parsed_args.timestamp:
+    if not args.timestamp:
         info("##### Git_OSINT finished at UTC %s ##### ", get_current(datetime.timezone.utc))
