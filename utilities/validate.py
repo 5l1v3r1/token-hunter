@@ -8,7 +8,7 @@ from logging import warning, info
 from api import gitlab
 
 
-def gitlab_api_keys(args):
+def gitlab_api_keys():
     username = gitlab.get_current_user()
     if not username:
         warning("[!] Cannot validate GitLab API key.")

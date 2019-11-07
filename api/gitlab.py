@@ -4,6 +4,7 @@ import os
 import re
 import requests
 from logging import error
+from utilities import arguments
 from retry import retry
 
 BASE_URL = 'https://gitlab.com/api/v4'
@@ -51,11 +52,23 @@ def get_current_user():
     return username
 
 
+def __get_proxies():
+    proxy_url = arguments.parsed_args.proxy
+    if not proxy_url:
+        return {}
+    return {
+        "http": proxy_url,
+        "https": proxy_url,
+    }
+
+
 @retry(requests.exceptions.ConnectionError, delay=1, backoff=2, tries=10)
 def __get(url):
-    headers = {"PRIVATE-TOKEN": os.getenv("GITLAB_API")}
-    headers.update({"USER-AGENT": "git_osint"})
-    response = requests.get(url, headers=headers)
+    headers = {
+        "PRIVATE-TOKEN": os.getenv("GITLAB_API"),
+        "USER-AGENT": "git_osint"
+    }
+    response = requests.get(url, headers=headers, proxies=__get_proxies())
     log_rate_limit_info(response.headers["RateLimit-Observed"],
                         response.headers["RateLimit-Limit"],
                         response.headers["RateLimit-ResetTime"])
