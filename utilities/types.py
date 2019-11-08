@@ -41,6 +41,9 @@ class Arguments:
                 sys.exit(1)
 
             self.parsed_args = parser.parse_args()
+            if self.parsed_args.proxy and not self.parsed_args.verify_tls:
+                parser.error('If you specify a proxy address, you must also specify a dynamic certificate in order to '
+                             'decrypt TLS traffic with the --verify-tls switch.')
 
     instance = None
 
