@@ -77,9 +77,11 @@ def __get(url):
         "USER-AGENT": "git_osint"
     }
     response = requests.get(url, headers=headers, proxies=__get_proxies(), verify=__get_verify_setting())
-    log_rate_limit_info(response.headers["RateLimit-Observed"],
-                        response.headers["RateLimit-Limit"],
-                        response.headers["RateLimit-ResetTime"])
+    # if its not a timeout, log rate limiting info.  otherwise, these headers don't exist
+    if response.status_code is not 504:
+        log_rate_limit_info(response.headers["RateLimit-Observed"],
+                            response.headers["RateLimit-Limit"],
+                            response.headers["RateLimit-ResetTime"])
     return response
 
 
