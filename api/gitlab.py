@@ -54,6 +54,12 @@ def get_current_user():
     return username
 
 
+def __get_verify_setting():
+    if not args.verify_tls:
+        return True
+    return args.verify_tls
+
+
 def __get_proxies():
     proxy_url = args.proxy
     if not proxy_url:
@@ -70,7 +76,7 @@ def __get(url):
         "PRIVATE-TOKEN": os.getenv("GITLAB_API"),
         "USER-AGENT": "git_osint"
     }
-    response = requests.get(url, headers=headers, proxies=__get_proxies())
+    response = requests.get(url, headers=headers, proxies=__get_proxies(), verify=__get_verify_setting())
     log_rate_limit_info(response.headers["RateLimit-Observed"],
                         response.headers["RateLimit-Limit"],
                         response.headers["RateLimit-ResetTime"])

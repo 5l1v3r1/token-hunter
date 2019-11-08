@@ -29,6 +29,10 @@ class Arguments:
             parser.add_argument('-p', '--proxy', type=str, action='store',
                                 help='Proxies all HTTP and TLS requests using the provided URL matching the scheme:  '
                                      'http(s)://user:pass@10.10.10.10:8000')
+            parser.add_argument('-v', '--verify-tls', type=str, action='store',
+                                help='Used in tandem with -p, this switch provides a method to verify TLS connections '
+                                     'using a dynamic cert. Provide a fully qualified path to the dynamic cert.  '
+                                     'Example:  /Users/username/owasp_zap_root_ca.cer.')
             parser.add_argument('-l', '--logfile', type=str, action='store',
                                 help='Will APPEND found items to specified file.')
 
