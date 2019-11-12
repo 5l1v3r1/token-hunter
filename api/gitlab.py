@@ -9,43 +9,43 @@ from retry import retry
 
 
 args = types.Arguments()
-BASE_URL = 'https://gitlab.com/api/v4'
+base_url = constants.Urls.gitlab_com_base_url()
 
 
 def get_issue_comments(project_id, issue_id):
-    return get('{}/projects/{}/issues/{}/discussions'.format(BASE_URL, project_id, issue_id))
+    return get('{}/projects/{}/issues/{}/discussions'.format(base_url, project_id, issue_id))
 
 
 def get_issues(project_id):
-    return get('{}/projects/{}/issues'.format(BASE_URL, project_id))
+    return get('{}/projects/{}/issues'.format(base_url, project_id))
 
 
 def get_project_snippets(project):
-    return get('{}/projects/{}/snippets'.format(BASE_URL, project))
+    return get('{}/projects/{}/snippets'.format(base_url, project))
 
 
 def get_snippet_raw(snippet_id):
-    return get('{}/snippets/{}/raw?line_ending=raw'.format(BASE_URL, snippet_id))
+    return get('{}/snippets/{}/raw?line_ending=raw'.format(base_url, snippet_id))
 
 
 def get_personal_projects(member):
-    return get('{}/users/{}/projects'.format(BASE_URL, member))
+    return get('{}/users/{}/projects'.format(base_url, member))
 
 
 def get_group_projects(group):
-    return get('{}/groups/{}/projects'.format(BASE_URL, group))
+    return get('{}/groups/{}/projects'.format(base_url, group))
 
 
 def get_group(group):
-    return get('{}/groups/{}'.format(BASE_URL, group))
+    return get('{}/groups/{}'.format(base_url, group))
 
 
 def get_members(group):
-    return get('{}/groups/{}/members'.format(BASE_URL, group))
+    return get('{}/groups/{}/members'.format(base_url, group))
 
 
 def get_current_user():
-    details = get('{}/user'.format(BASE_URL))
+    details = get('{}/user'.format(base_url))
 
     if not details:
         return False
