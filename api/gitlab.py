@@ -4,7 +4,7 @@ import os
 import re
 import requests
 from logging import error
-from utilities import types
+from utilities import types, constants
 from retry import retry
 
 
@@ -73,7 +73,7 @@ def __get_proxies():
 @retry(requests.exceptions.ConnectionError, delay=1, backoff=2, tries=10)
 def __get(url):
     headers = {
-        "PRIVATE-TOKEN": os.getenv("GITLAB_API"),
+        "PRIVATE-TOKEN": os.getenv(constants.Environment.gitlab_api_token()),
         "USER-AGENT": "git_osint"
     }
     response = requests.get(url, headers=headers, proxies=__get_proxies(), verify=__get_verify_setting())
