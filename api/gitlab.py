@@ -7,18 +7,31 @@ from logging import error
 from utilities import types, constants
 from retry import retry
 
-args = types.Arguments()
-base_url = constants.Urls.gitlab_com_base_url()
-
 
 def build_session():
+    command_args = types.Arguments()
+
+    def get_cert():
+        if not command_args.cert:
+            return True
+        return command_args.cert
+
+    def get_proxies():
+        proxy_url = command_args.proxy
+        if not proxy_url:
+            return {}
+        return {
+            "http": proxy_url,
+            "https": proxy_url,
+        }
+
     session = requests.session()
     session.headers.update({
         "PRIVATE-TOKEN": os.getenv(constants.Environment.gitlab_api_token()),
         "USER-AGENT": "git_osint"
     })
-    session.proxies = Http.get_proxies()
-    session.verify = Http.get_cert()
+    session.proxies = get_proxies()
+    session.verify = get_cert()
     return session
 
 
@@ -26,22 +39,6 @@ class Http:
 
     def __init__(self, session_builder):
         self.session = session_builder()
-
-    @staticmethod
-    def get_cert():
-        if not args.cert:
-            return True
-        return args.cert
-
-    @staticmethod
-    def get_proxies():
-        proxy_url = args.proxy
-        if not proxy_url:
-            return {}
-        return {
-            "http": proxy_url,
-            "https": proxy_url,
-        }
 
     @retry(requests.exceptions.ConnectionError, delay=1, backoff=2, tries=10)
     def get(self, url):
@@ -63,33 +60,34 @@ class GitLab:
 
     def __init__(self, session_builder=build_session):
         self.http = Http(session_builder)
+        self.base_url = constants.Urls.gitlab_com_base_url()
 
     def get_issue_comments(self, project_id, issue_id):
-        return self.__get__('{}/projects/{}/issues/{}/discussions'.format(base_url, project_id, issue_id))
+        return self.get('{}/projects/{}/issues/{}/discussions'.format(self.base_url, project_id, issue_id))
 
     def get_issues(self, project_id):
-        return self.__get__('{}/projects/{}/issues'.format(base_url, project_id))
+        return self.get('{}/projects/{}/issues'.format(self.base_url, project_id))
 
     def get_project_snippets(self, project):
-        return self.__get__('{}/projects/{}/snippets'.format(base_url, project))
+        return self.get('{}/projects/{}/snippets'.format(self.base_url, project))
 
     def get_snippet_raw(self, snippet_id):
-        return self.__get__('{}/snippets/{}/raw?line_ending=raw'.format(base_url, snippet_id))
+        return self.get('{}/snippets/{}/raw?line_ending=raw'.format(self.base_url, snippet_id))
 
     def get_personal_projects(self, member):
-        return self.__get__('{}/users/{}/projects'.format(base_url, member))
+        return self.get('{}/users/{}/projects'.format(self.base_url, member))
 
     def get_group_projects(self, group):
-        return self.__get__('{}/groups/{}/projects'.format(base_url, group))
+        return self.get('{}/groups/{}/projects'.format(self.base_url, group))
 
     def get_group(self, group):
-        return self.__get__('{}/groups/{}'.format(base_url, group))
+        return self.get('{}/groups/{}'.format(self.base_url, group))
 
     def get_members(self, group):
-        return self.__get__('{}/groups/{}/members'.format(base_url, group))
+        return self.get('{}/groups/{}/members'.format(self.base_url, group))
 
     def get_current_user(self):
-        details = self.__get__('{}/user'.format(base_url))
+        details = self.get('{}/user'.format(self.base_url))
 
         if not details:
             return False
@@ -97,7 +95,7 @@ class GitLab:
         username = details['username']
         return username
 
-    def __get__(self, url):
+    def get(self, url):
         """
         Helper function to interact with GitLab API using python requests
 

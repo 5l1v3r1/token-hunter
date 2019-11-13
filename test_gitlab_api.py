@@ -1,17 +1,19 @@
 import requests
 import requests_mock
 
-# from api import gitlab
-
-
-def __arrange(verb, uri, expected_result):
-    session = requests.Session()
-    adapter = requests_mock.Adapter()
-    adapter.register_uri(verb, uri, text=expected_result)
-    session.mount('mock', adapter)
-    return session
+from api import gitlab
 
 
 def test_gitlab_get():
-    session = __arrange('GET', 'http://someurl.com/test', 'data')
-    # response = gitlab.get("http://someurl.com", session)
+    uri = "mock://gitlab.com/api/v4/user"
+    expected_json = {'username': 'codeEmitter'}
+
+    def session_builder():
+        session = requests.Session()
+        adapter = requests_mock.Adapter()
+        adapter.register_uri("GET", uri, json=expected_json, status_code=200, headers={"RateLimit-Observed": "600", "RateLimit-Limit": "600", "RateLimit-ResetTime": "1/1/2020", "Content-Type": "application/json"})
+        session.mount('mock', adapter)
+        return session
+    target = gitlab.GitLab(session_builder)
+    response = target.get(uri)
+    assert response == expected_json
