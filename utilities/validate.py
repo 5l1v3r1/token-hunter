@@ -8,6 +8,8 @@ from logging import warning, info
 from api import gitlab
 from utilities import constants
 
+gitlab = gitlab.GitLab()
+
 
 def gitlab_api_keys():
     username = gitlab.get_current_user()

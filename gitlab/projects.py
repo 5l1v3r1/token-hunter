@@ -1,8 +1,9 @@
-from api import gitlab
 from logging import info
+from api import gitlab
+
+gitlab = gitlab.GitLab()
 
 
-# move to gitlab/groups
 def all_group_projects(group):
     group_projects = {}
 

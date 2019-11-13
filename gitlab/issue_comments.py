@@ -1,5 +1,8 @@
 from api import gitlab
 from utilities import types
+from api import gitlab
+
+gitlab = gitlab.GitLab()
 
 
 def get_all(project_id, issue_id, issue_web_url):

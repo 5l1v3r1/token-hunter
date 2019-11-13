@@ -1,5 +1,8 @@
 from api import gitlab
 from logging import info
+from api import gitlab
+
+gitlab = gitlab.GitLab()
 
 
 def get_all(group):
