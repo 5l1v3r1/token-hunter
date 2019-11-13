@@ -54,10 +54,10 @@ def get_current_user():
     return username
 
 
-def __get_verify_setting():
-    if not args.verify_tls:
+def __get_cert(args):
+    if not args.cert:
         return True
-    return args.verify_tls
+    return args.cert
 
 
 def __get_proxies():
