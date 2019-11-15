@@ -91,3 +91,34 @@ def test_gitlab_handles_responses_without_headers_correctly(requests_mock):
     assert requests_mock.call_count == 1
     assert requests_mock.request_history[0].method == "GET"
     assert requests_mock.request_history[0].url == expected_url
+
+
+def test_gitlab_handles_dynamic_page_size_reductions(requests_mock):
+    expected_url_initial = "https://gitlab.com/api/v4/groups/1/members"
+    expected_url_paged = "https://gitlab.com/api/v4/groups/1/members?per_page=10"
+    request2_json = {"username": "jsmith"}
+    url2_headers = {
+        "RateLimit-Observed": "500",
+        "RateLimit-Limit": "600",
+        "RateLimit-ResetTime": "1/1/2020",
+        "Content-Type": "application/json",
+        "Link": '<https://gitlab.com/api/v4/groups/1/members?id=1&page=1&per_page=20>; rel="prev", <https://gitlab.com/api/v4/groups/1/members?id=1&page=1&per_page=20>; rel="first", <https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=20>; rel="last"'
+    }
+    requests_mock.register_uri("GET", expected_url_initial, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
+    requests_mock.register_uri("GET", expected_url_paged, json=[request2_json], status_code=200, headers=url2_headers,
+                               complete_qs=True)
+    target = gitlab.GitLab(lambda: requests.Session())
+    response = target.get(expected_url_initial)
+    assert response == [request2_json]
+    assert requests_mock.called is True
+    assert requests_mock.call_count == 3
+    assert requests_mock.request_history[0].method == "GET"
+    assert requests_mock.request_history[0].url == expected_url_initial
+    assert requests_mock.request_history[1].method == "GET"
+    assert requests_mock.request_history[1].url == expected_url_initial #retry attempt
+    assert requests_mock.request_history[2].method == "GET"
+    assert requests_mock.request_history[2].url == expected_url_paged #success with dynamic page size reduction
+
+
+
+

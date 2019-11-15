@@ -62,6 +62,7 @@ class GitLab:
     def __init__(self, session_builder=build_session):
         self.http = Http(session_builder)
         self.base_url = constants.Urls.gitlab_com_base_url()
+        self.page_size = 20
 
     def get_issue_comments(self, project_id, issue_id):
         return self.get('{}/projects/{}/issues/{}/discussions'.format(self.base_url, project_id, issue_id))
@@ -106,7 +107,17 @@ class GitLab:
               (https://docs.gitlab.com/ee/api/README.html#pagination)
         """
 
-        response = self.http.get(url)
+        def adjust_paging(original_url):
+            if "?" not in original_url:
+                self.page_size = round(self.page_size / 2)
+                return original_url + f"?per_page={self.page_size}"
+
+        try:
+            response = self.http.get(url)
+        except requests.exceptions.ConnectionError:
+            url = adjust_paging(url)
+            warning(f"[!] ConnectionError:  retry failed, adjusting page size:  {url}")
+            response = self.http.get(url)
 
         if response.status_code == 200:
             # The "Link" header is returned when there is more than one page of
