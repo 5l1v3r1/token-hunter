@@ -94,7 +94,7 @@ def test_gitlab_handles_responses_without_headers_correctly(requests_mock):
 
 
 def test_gitlab_handles_dynamic_page_size_reductions(requests_mock):
-    expected_url_initial = "https://gitlab.com/api/v4/groups/1/members"
+    expected_url_initial = "https://gitlab.com/api/v4/groups/1/members?per_page=20"
     expected_url_paged = "https://gitlab.com/api/v4/groups/1/members?per_page=10"
     request2_json = {"username": "jsmith"}
     url2_headers = {
@@ -115,9 +115,9 @@ def test_gitlab_handles_dynamic_page_size_reductions(requests_mock):
     assert requests_mock.request_history[0].method == "GET"
     assert requests_mock.request_history[0].url == expected_url_initial
     assert requests_mock.request_history[1].method == "GET"
-    assert requests_mock.request_history[1].url == expected_url_initial #retry attempt
+    assert requests_mock.request_history[1].url == expected_url_initial  # retry attempt
     assert requests_mock.request_history[2].method == "GET"
-    assert requests_mock.request_history[2].url == expected_url_paged #success with dynamic page size reduction
+    assert requests_mock.request_history[2].url == expected_url_paged  # success with dynamic page size reduction
 
 
 
