@@ -45,7 +45,7 @@ class Http:
     def get(self, url):
         response = self.session.get(url)
         # if its not a timeout, log rate limiting info.  otherwise, these headers don't exist
-        if response.status_code != 504:
+        if "RateLimit-Observed" and "RateLimit-Limit" and "RateLimit-ResetTime" in response.headers.keys():
             self.log_rate_limit_info(response.headers["RateLimit-Observed"],
                                      response.headers["RateLimit-Limit"],
                                      response.headers["RateLimit-ResetTime"])
