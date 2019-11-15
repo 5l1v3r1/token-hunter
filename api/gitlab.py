@@ -40,7 +40,8 @@ class Http:
     def __init__(self, session_builder):
         self.session = session_builder()
 
-    @retry(requests.exceptions.ConnectionError, delay=1, backoff=2, tries=10)
+    @retry(requests.exceptions.ConnectionError, delay=constants.Requests.retry_delay(),
+           backoff=constants.Requests.retry_backoff(), tries=constants.Requests.retry_max_tries())
     def get(self, url):
         response = self.session.get(url)
         # if its not a timeout, log rate limiting info.  otherwise, these headers don't exist

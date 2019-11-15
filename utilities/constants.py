@@ -1,5 +1,4 @@
 
-
 class Environment:
     @staticmethod
     def gitlab_api_token():
@@ -11,3 +10,16 @@ class Urls:
     def gitlab_com_base_url():
         return "https://gitlab.com/api/v4"
 
+
+class Requests:
+    @staticmethod
+    def retry_max_tries():
+        return 2
+
+    @staticmethod
+    def retry_backoff():
+        return 4
+
+    @staticmethod
+    def retry_delay():
+        return 4
