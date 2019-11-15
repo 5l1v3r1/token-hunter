@@ -44,7 +44,7 @@ class Http:
            backoff=constants.Requests.retry_backoff(), tries=constants.Requests.retry_max_tries())
     def get(self, url):
         response = self.session.get(url)
-        # if its not a timeout, log rate limiting info.  otherwise, these headers don't exist
+        # rate limiting headers do not exist for all responses
         if "RateLimit-Observed" and "RateLimit-Limit" and "RateLimit-ResetTime" in response.headers.keys():
             self.log_rate_limit_info(response.headers["RateLimit-Observed"],
                                      response.headers["RateLimit-Limit"],

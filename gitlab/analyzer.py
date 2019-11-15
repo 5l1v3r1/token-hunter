@@ -10,7 +10,7 @@ def analyze():
 
     for group in args.group:
         group_details = groups.get(group)
-        if len(group_details) == 0:
+        if group_details is False:
             warning("[!] %s not found, skipping", group)
             continue
 

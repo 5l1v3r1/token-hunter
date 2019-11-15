@@ -26,3 +26,9 @@ def environment():
         sys.exit()
     else:
         info(f"[*] {constants.Environment.gitlab_api_token()} is configured and will be used.")
+
+
+def api_result(details):
+    if details and len(details) > 0:
+        return True
+    return False
