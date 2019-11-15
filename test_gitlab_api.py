@@ -1,5 +1,6 @@
 import requests
 import requests_mock
+import pytest
 
 from api import gitlab
 
@@ -51,3 +52,13 @@ def test_gitlab_pages_requests_properly(requests_mock):
     assert requests_mock.request_history[0].url == expected_url_initial
     assert requests_mock.request_history[1].method == "GET"
     assert requests_mock.request_history[1].url == expected_url_paged
+
+
+def test_gitlab_handles_a_unpaged_timeout_correctly(requests_mock):
+    with pytest.raises(requests.exceptions.ConnectTimeout):
+        expected_url = "http://gitlab.com/api/v4/members/1"
+        requests_mock.register_uri("GET", expected_url, exc=requests.exceptions.ConnectTimeout)
+        target = gitlab.GitLab(lambda: requests.Session())
+        target.get(expected_url)
+
+
