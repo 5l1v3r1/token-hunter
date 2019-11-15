@@ -12,8 +12,7 @@ def test_gitlab_basic_get(requests_mock):
         "RateLimit-Observed": "500",
         "RateLimit-Limit": "600",
         "RateLimit-ResetTime": "1/1/2020",
-        "Content-Type": "application/json"}
-    )
+        "Content-Type": "application/json"})
     target = gitlab.GitLab(lambda: requests.Session())
     assert target.get(expected_url) == expected_json
     assert requests_mock.called is True
@@ -82,3 +81,13 @@ def test_gitlab_handles_a_paged_timeout_correctly(requests_mock):
         target.get(expected_url_initial)
 
 
+def test_gitlab_handles_responses_without_headers_correctly(requests_mock):
+    expected_url = "http://gitlab.com/api/v4/user"
+    requests_mock.register_uri("GET", expected_url, status_code=504, reason="Gateway timeout",
+                               headers={"Content-Type": "application/text"})
+    target = gitlab.GitLab(lambda: requests.Session())
+    assert target.get(expected_url) is False
+    assert requests_mock.called is True
+    assert requests_mock.call_count == 1
+    assert requests_mock.request_history[0].method == "GET"
+    assert requests_mock.request_history[0].url == expected_url
