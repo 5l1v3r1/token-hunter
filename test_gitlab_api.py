@@ -6,7 +6,7 @@ from api import gitlab
 
 
 def test_gitlab_basic_get(requests_mock):
-    expected_url = "http://gitlab.com/api/v4/user"
+    expected_url = "http://gitlab.com/api/v4/user?per_page=20"
     expected_json = {"username": "codeEmitter"}
     requests_mock.register_uri("GET", expected_url, json=expected_json, status_code=200, headers={
         "RateLimit-Observed": "500",
@@ -22,7 +22,7 @@ def test_gitlab_basic_get(requests_mock):
 
 
 def test_gitlab_pages_requests_properly(requests_mock):
-    expected_url_initial = "http://gitlab.com/api/v4/groups/1"
+    expected_url_initial = "http://gitlab.com/api/v4/groups/1?per_page=20"
     expected_url_paged = "https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=20"
     request1_json = {"username": "codeEmitter"}
     request2_json = {"username": "jsmith"}
@@ -55,10 +55,16 @@ def test_gitlab_pages_requests_properly(requests_mock):
 
 def test_gitlab_handles_a_unpaged_timeout_correctly(requests_mock):
     with pytest.raises(requests.exceptions.ConnectTimeout):
-        expected_url = "http://gitlab.com/api/v4/members/1"
-        requests_mock.register_uri("GET", expected_url, exc=requests.exceptions.ConnectTimeout)
+        expected_url_1 = "http://gitlab.com/api/v4/members/1?per_page=20"
+        expected_url_2 = "http://gitlab.com/api/v4/members/1?per_page=10"
+        expected_url_3 = "http://gitlab.com/api/v4/members/1?per_page=5"
+        expected_url_4 = "http://gitlab.com/api/v4/members/1?per_page=1"
+        requests_mock.register_uri("GET", expected_url_1, exc=requests.exceptions.ConnectTimeout)
+        requests_mock.register_uri("GET", expected_url_2, exc=requests.exceptions.ConnectTimeout)
+        requests_mock.register_uri("GET", expected_url_3, exc=requests.exceptions.ConnectTimeout)
+        requests_mock.register_uri("GET", expected_url_4, exc=requests.exceptions.ConnectTimeout)
         target = gitlab.GitLab(lambda: requests.Session())
-        target.get(expected_url)
+        target.get(expected_url_1)
 
 
 def test_gitlab_handles_paged_timeout_correctly(requests_mock):
@@ -74,18 +80,21 @@ def test_gitlab_handles_paged_timeout_correctly(requests_mock):
             "RateLimit-Limit": "600",
             "RateLimit-ResetTime": "1/1/2020",
             "Content-Type": "application/json",
-            "Link": f'<{expected_url_paged}>; rel="next", <https://gitlab.com/api/v4/groups/1/members?id=1&page=1&per_page=20>; rel="first", <https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=20>; rel="last"'
+            "Link": f'<{expected_url_paged_1}>; rel="next", <https://gitlab.com/api/v4/groups/1/members?id=1&page=1&per_page=20>; rel="first", <https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=20>; rel="last"'
         }
 
         requests_mock.register_uri("GET", expected_url_initial, json=[request1_json], status_code=200,
                                    headers=url1_headers)
-        requests_mock.register_uri("GET", expected_url_paged, exc=requests.exceptions.ConnectTimeout)
+        requests_mock.register_uri("GET", expected_url_paged_1, exc=requests.exceptions.ConnectTimeout)
+        requests_mock.register_uri("GET", expected_url_paged_2, exc=requests.exceptions.ConnectTimeout)
+        requests_mock.register_uri("GET", expected_url_paged_3, exc=requests.exceptions.ConnectTimeout)
+        requests_mock.register_uri("GET", expected_url_paged_4, exc=requests.exceptions.ConnectTimeout)
         target = gitlab.GitLab(lambda: requests.Session())
         target.get(expected_url_initial)
 
 
 def test_gitlab_handles_responses_without_headers_correctly(requests_mock):
-    expected_url = "http://gitlab.com/api/v4/user"
+    expected_url = "http://gitlab.com/api/v4/user?per_page=20"
     requests_mock.register_uri("GET", expected_url, status_code=504, reason="Gateway timeout",
                                headers={"Content-Type": "application/text"})
     target = gitlab.GitLab(lambda: requests.Session())
