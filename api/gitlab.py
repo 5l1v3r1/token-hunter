@@ -144,7 +144,7 @@ class GitLab:
                     next_url = re.findall(regex, response.headers['Link'])[0]
 
                     # Add the individual response to the collective
-                    response = self.http.get_with_retry(next_url)
+                    response = self.http.get_with_retry_and_paging_adjustment(next_url)
                     if response.status_code == 200:
                         all_results += response.json()
                     else:

@@ -61,10 +61,13 @@ def test_gitlab_handles_a_unpaged_timeout_correctly(requests_mock):
         target.get(expected_url)
 
 
-def test_gitlab_handles_a_paged_timeout_correctly(requests_mock):
+def test_gitlab_handles_paged_timeout_correctly(requests_mock):
     with pytest.raises(requests.exceptions.ConnectTimeout):
         expected_url_initial = "http://gitlab.com/api/v4/groups/1"
-        expected_url_paged = "https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=20"
+        expected_url_paged_1 = "https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=20"
+        expected_url_paged_2 = "https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=10"
+        expected_url_paged_3 = "https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=5"
+        expected_url_paged_4 = "https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=1"
         request1_json = {"username": "codeEmitter"}
         url1_headers = {
             "RateLimit-Observed": "500",
