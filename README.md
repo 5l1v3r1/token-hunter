@@ -36,7 +36,8 @@ pip3 install -r ./requirements.txt
 Then, you can run the tool as follows:
 
 ``` 
-usage: git_osint.py [-h] -g GROUP [-m] [-s] [-i] [-t] [-l LOGFILE]
+usage: git_osint.py [-h] -g GROUP [-m] [-s] [-i] [-t] [-p PROXY] [-c CERT]
+                    [-l LOGFILE]
 
 Collect OSINT for GitLab groups and members. Optionally search the group and
 group members snippets, issues, and issue comments for sensitive data.
@@ -51,6 +52,15 @@ optional arguments:
                         with the group for secrets
   -t, --timestamp       Disables display of start/finish times and originating
                         IP to the output
+  -p PROXY, --proxy PROXY
+                        Proxies all HTTP and TLS requests using the provided
+                        URL matching the scheme:
+                        http(s)://user:pass@10.10.10.10:8000
+  -c CERT, --cert CERT  Used in tandem with -p (--proxy), this switch provides
+                        a fully qualified path to a certificate to verify TLS
+                        connections. Provide a fully qualified path to the
+                        dynamic cert. Example:
+                        /Users/<username>/owasp_zap_root_ca.cer.
   -l LOGFILE, --logfile LOGFILE
                         Will APPEND found items to specified file.
 
@@ -86,5 +96,3 @@ The following are possible future improvements:
 
 * Cross-referencing between GitHub and GitLab
 * Additional social media sites like StackOverflow, Twitter, etc
-* Searching for secrets within GitLab repository historical commits.
-
