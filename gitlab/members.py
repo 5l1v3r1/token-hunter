@@ -1,5 +1,8 @@
-from api import gitlab
 from logging import info
+from api import gitlab
+from utilities import validate
+
+gitlab = gitlab.GitLab()
 
 
 def get_all(group):
@@ -7,8 +10,9 @@ def get_all(group):
 
     info("[*] Fetching all members for group %s", group)
     details = gitlab.get_members(group)
-    info("[*] Found %s members for group %s", len(details), group)
-    for item in details:
-        members.append(item['username'])
+    if validate.api_result(details):
+        info("[*] Found %s members for group %s", len(details), group)
+        for item in details:
+            members.append(item['username'])
 
     return members

@@ -6,6 +6,9 @@ import os
 
 from logging import warning, info
 from api import gitlab
+from utilities import constants
+
+gitlab = gitlab.GitLab()
 
 
 def gitlab_api_keys():
@@ -14,12 +17,18 @@ def gitlab_api_keys():
         warning("[!] Cannot validate GitLab API key.")
         sys.exit()
 
-    info("[*] Using GitLab API key assigned to username: %s", username)
+    info("[*] Using GitLab API Token assigned to username: %s", username)
 
 
 def environment():
-    if not os.getenv('GITLAB_API'):
-        warning("[!] GITLAB_API environment variable is not set.")
+    if not os.getenv(constants.Environment.gitlab_api_token()):
+        warning(f"[!] {constants.Environment.gitlab_api_token()} environment variable is not set.")
         sys.exit()
     else:
-        info("[*] GITLAB_API is configured and will be used.")
+        info(f"[*] {constants.Environment.gitlab_api_token()} is configured and will be used.")
+
+
+def api_result(details):
+    if details and len(details) > 0:
+        return True
+    return False

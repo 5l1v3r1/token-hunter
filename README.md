@@ -24,7 +24,7 @@ Before running the tool, you will need to generate a GitLab API key and export t
 it as an environment variable. This can be done as shown below:
 
 ``` 
-export GITLAB_API=xxxxx
+export GITLAB_API_TOKEN=xxxxx
 ```
 
 Next, install dependencies with:

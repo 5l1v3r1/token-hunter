@@ -7,5 +7,3 @@ before_script:
 test:
   script:
     - pytest -v
-  only:
-    - master
