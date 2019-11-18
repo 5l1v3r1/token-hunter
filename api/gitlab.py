@@ -3,9 +3,8 @@ from logging import warning
 import os
 import re
 import requests
-from logging import error
+from api import http
 from utilities import types, constants
-from retry import retry
 
 
 def build_session():
@@ -35,50 +34,10 @@ def build_session():
     return session
 
 
-class Http:
-
-    def __init__(self, session_builder):
-        self.session = session_builder()
-
-    @retry(requests.exceptions.ConnectionError, delay=constants.Requests.retry_delay(),
-           backoff=constants.Requests.retry_backoff(), tries=constants.Requests.retry_max_tries())
-    def __get__(self, url):
-        response = self.session.get(url)
-        # rate limiting headers do not exist for all responses
-        if "RateLimit-Observed" and "RateLimit-Limit" and "RateLimit-ResetTime" in response.headers.keys():
-            self.log_rate_limit_info(response.headers["RateLimit-Observed"],
-                                     response.headers["RateLimit-Limit"],
-                                     response.headers["RateLimit-ResetTime"])
-        return response
-
-    @staticmethod
-    def __adjust_paging__(original_url, page_size):
-        if "?" not in original_url:
-            return original_url + f"?per_page={page_size}"
-        return re.sub(r'per_page=?\d{1,2}', f"per_page={page_size}", original_url)
-
-    def get_with_retry_and_paging_adjustment(self, url):
-        for page_size in [20, 10, 5, 1]:
-            url = Http.__adjust_paging__(url, page_size)
-            try:
-                response = self.__get__(url)
-            except requests.exceptions.ConnectionError as e:
-                warning(f"[!] ConnectionError:  retries failed, adjusting page size to {page_size} : {url}")
-                if page_size <= 1:
-                    raise e
-                continue
-            return response
-
-    @staticmethod
-    def log_rate_limit_info(observed, limit, reset_time):
-        if int(observed) >= int(limit) - 10:
-            error(f"[!] Nearing rate limit ({observed}/{limit})!  Reset time: {reset_time}.")
-
-
 class GitLab:
 
     def __init__(self, session_builder=build_session):
-        self.http = Http(session_builder)
+        self.http = http.Http(session_builder)
         self.base_url = constants.Urls.gitlab_com_base_url()
 
     def get_issue_comments(self, project_id, issue_id):
@@ -135,7 +94,6 @@ class GitLab:
                 # results
                 all_results = response.json()
                 # Now, loop through until there is no 'next' link provided
-                pagenum = 2
                 while 'Link' in response.headers.keys() and 'rel="next"' in response.headers['Link']:
                     # Using print instead of logging, we don't want the per-page
                     # status update in the log file
@@ -149,7 +107,6 @@ class GitLab:
                         all_results += response.json()
                     else:
                         warning("[!] Error processing pagination URL: %s", next_url)
-                    pagenum += 1
 
                 # Return the collective results
                 return all_results
