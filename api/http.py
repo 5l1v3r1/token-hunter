@@ -41,6 +41,6 @@ class Http:
 
     @staticmethod
     def log_rate_limit_info(observed, limit, reset_time):
-        if int(observed) >= int(limit) - 10:
-            warning(f"[!] Nearing rate limit ({observed}/{limit})!  Reset time: {reset_time}.")
+        if int(observed) == int(limit):
+            warning(f"[!] Rate limit observed ({observed}/{limit})!  Reset time: {reset_time}.")
 
