@@ -18,7 +18,7 @@ def analyze():
         all_members = members.get_all(group)
 
         if args.members:
-            for member in all_members:
+            for member in all_members.keys():
                 personal_projects.update(projects.all_member_projects(member))
 
         all_projects = {**group_projects, **personal_projects}
@@ -98,8 +98,8 @@ def log_group_projects(group_projects):
 
 def log_members(all_members):
     info("  MEMBERS (%s):", len(all_members))
-    for member in all_members:
-        info("    %s", member)
+    for member, web_url in all_members.items():
+        info("    %s (%s)", member, web_url)
 
 
 def log_members_projects(personal_projects):
