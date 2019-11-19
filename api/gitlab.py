@@ -106,7 +106,7 @@ class GitLab:
                     if response.status_code == 200:
                         all_results += response.json()
                     else:
-                        warning("[!] Error processing pagination URL: %s", next_url)
+                        warning("[!] Error (%s) processing pagination URL: %s", response.status_code, next_url)
 
                 # Return the collective results
                 return all_results
