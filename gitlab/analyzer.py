@@ -48,7 +48,7 @@ def analyze():
             # loop each project (personal or group)
             for project_id, project_url in all_projects.items():
                 # loop each issue in the project and search for secrets in the description
-                project_issues = issues.get_all(project_id)
+                project_issues = issues.get_all(project_id, project_url)
                 for issue in project_issues:
                     all_issues.append(issue)
                     secrets = issues.sniff_secrets(issue)
