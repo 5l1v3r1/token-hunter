@@ -17,7 +17,8 @@ def get_all(project_id, issue_id, issue_web_url):
                     continue
                 comments.append(types.Comment('issue', issue_web_url, note['body']))
                 legit_comments += 1
-        info("[*] Found %s comments for issue %s", legit_comments, issue_web_url)
+        if legit_comments > 0:
+            info("[*] Found %s comments for issue %s", legit_comments, issue_web_url)
     return comments
 
 
