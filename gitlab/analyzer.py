@@ -37,7 +37,7 @@ def analyze():
             all_snippets = snippets.get_all([group_projects, personal_projects])
 
         if args.issues:
-            info("[*] Fetching issues & comments for all projects")
+            info("[*] Fetching issues & comments for %s projects", len(all_projects))
             # loop each project (personal or group)
             for project_id, project_url in all_projects.items():
                 # loop each issue in the project and search for secrets in the description
@@ -84,13 +84,13 @@ def get_snippet_secrets(all_snippets, all_projects, args):
 def log_issue_comment_secrets(secrets, all_issues, all_comments):
     info("   FOUND %s SECRETS IN %s TOTAL ISSUES & COMMENTS", len(secrets), len(all_issues) + len(all_comments))
     for secret in secrets:
-        info("     Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, secret.secret)
 
 
 def log_snippet_secrets(all_secrets, all_snippets):
     info("   FOUND %s SECRETS IN %s TOTAL SNIPPETS", len(all_secrets), len(all_snippets))
     for secret in all_secrets:
-        info("       Url: %s Type: %s Candidate Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, secret.secret)
 
 
 def log_related_issues_comments(all_issues, all_comments, all_projects):
