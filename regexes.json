@@ -1,6 +1,6 @@
 {
-  "GitLab Personal Access Token, API-style": "private.token[^a-z0-9_]*?[a-z0-9_]{20}([^a-z0-9_]|$)",
-  "GitLab Personal Access Token, generic-style": "access.token[^a-z0-9_]*?[a-z0-9_]{20}([^a-z0-9_]|$)",
+  "GitLab PAT API-style": "private.token[^a-z0-9_]*?[a-z0-9_]{20}([^a-z0-9_]|$)",
+  "GitLab PAT generic-style": "access.token[^a-z0-9_]*?[a-z0-9_]{20}([^a-z0-9_]|$)",
   "GitLab Generic Token": "gitlab.token[^a-z0-9_]*?[a-z0-9_]{20}([^a-z0-9_]|$)",
   "Slack Token": "(xox[p|b|o|a]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
   "SSH Key": "(-*)BEGIN [\\s\\S]{2,} PRIVATE KEY(-*)",

@@ -1,7 +1,7 @@
-from api import gitlab
 from utilities import types
 from api import gitlab
 from utilities import validate
+from logging import info
 
 gitlab = gitlab.GitLab()
 
@@ -12,6 +12,7 @@ def get_all(projects):
         for key, value in project.items():
             details = gitlab.get_project_snippets(key)
             if validate.api_result(details):
+                info("[*] Found %s snippets for project %s", len(details), value)
                 for item in details:
                     snippets.update({item['id']: item['web_url']})
     return snippets
