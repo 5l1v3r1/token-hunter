@@ -24,13 +24,13 @@ def test_finds_simple_json_gitlab_pat():
     assert len(actual) == 1
     assert actual[0].url == test_url
     assert actual[0].secret == "private-token:ab123mr980pas453201s"
-    assert actual[0].secret_type == "GitLab Personal Access Token, API-style"
+    assert actual[0].secret_type == "GitLab PAT API-style"
 
 
 def test_regexes_are_loaded():
     target = types.SecretsMonitor()
     assert len(target.regexes) > 0
-    assert target.regexes["GitLab Personal Access Token, API-style"] is not None
+    assert target.regexes["GitLab PAT API-style"] is not None
 
 
 def test_finds_gitlab_pat_in_text_block():
@@ -73,7 +73,7 @@ def test_finds_gitlab_pat_in_text_block():
     assert len(actual) == 1
     assert actual[0].secret == 'private-token=asdfkdjfkjalksjdflkj"'
     assert actual[0].url == test_url
-    assert actual[0].secret_type == "GitLab Personal Access Token, API-style"
+    assert actual[0].secret_type == "GitLab PAT API-style"
 
 
 def test_finds_naked_slack_token():
