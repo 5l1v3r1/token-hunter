@@ -105,3 +105,25 @@ def test_finds_openssh_private_key():
                     -----END OPENSSH PRIVATE KEY-----"
                 """)}
     assert len(target.sniff_secrets(content)) == 1
+
+
+def test_finds_gitlab_ci_registration_token():
+    target = types.SecretsMonitor()
+    content = {test_url: textwrap.dedent("""\
+    runners:
+    - name: ***computer name***
+      limit: 0
+      outputlimit: 0
+      requestconcurrency: 0
+      runnercredentials:
+        url: https://gitlab.com/
+        token: guz_DJCzb4rsUybpwuAQ
+        tlscafile: ""
+        tlscertfile: ""
+        tlskeyfile: ""
+      runnersettings:
+        executor: docker
+        buildsdir: ""
+        cachedir: ""
+    """)}
+    assert len(target.sniff_secrets(content)) == 1
