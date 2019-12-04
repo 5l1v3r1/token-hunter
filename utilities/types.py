@@ -14,8 +14,11 @@ class Arguments:
                             "sensitive data.")
             required_named = parser.add_argument_group('required arguments')
             required_named.add_argument('-g', '--group', type=str, action='append', required=True,
-                                        help="ID or URL encoded name of a GitLab group.  This option, by itself, "
+                                        help="ID or HTML encoded name of a GitLab group.  This option, by itself, "
                                              "will display group projects and member names only.")
+            parser.add_argument('-u', '--url', action='store', nargs='?', const='https://gitlab.com/', type=str,
+                                help="Optional argument that specifies the root url for scanning.  If the argument "
+                                     "is not supplied, it defaults to 'https://gitlab.com'")
             parser.add_argument('-m', '--members', action='store_true',
                                 help="Includes group members personal projects, snippets, issues, and issue comments "
                                      "in the search for secrets")

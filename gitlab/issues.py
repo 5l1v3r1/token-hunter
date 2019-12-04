@@ -2,7 +2,7 @@ from utilities import types, validate
 from api import gitlab
 from logging import info
 
-gitlab = gitlab.GitLab()
+gitlab = gitlab.GitLab(types.Arguments().url)
 
 
 def get_all(project_id, project_url):

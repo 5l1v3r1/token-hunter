@@ -1,8 +1,8 @@
 from logging import info
 from api import gitlab
-from utilities import validate
+from utilities import validate, types
 
-gitlab = gitlab.GitLab()
+gitlab = gitlab.GitLab(types.Arguments().url)
 
 
 def get_all(group):

@@ -1,8 +1,9 @@
 import requests
-import requests_mock
 import pytest
 
 from api import gitlab
+
+ROOT_URL = "https://gitlab.com/"
 
 
 def test_gitlab_basic_get(requests_mock):
@@ -13,7 +14,7 @@ def test_gitlab_basic_get(requests_mock):
         "RateLimit-Limit": "600",
         "RateLimit-ResetTime": "1/1/2020",
         "Content-Type": "application/json"})
-    target = gitlab.GitLab(lambda: requests.Session())
+    target = gitlab.GitLab(ROOT_URL, lambda: requests.Session())
     assert target.get(expected_url) == expected_json
     assert requests_mock.called is True
     assert requests_mock.call_count == 1
@@ -43,7 +44,7 @@ def test_gitlab_pages_requests_properly(requests_mock):
 
     requests_mock.register_uri("GET", expected_url_initial, json=[request1_json], status_code=200, headers=url1_headers)
     requests_mock.register_uri("GET", expected_url_paged, json=[request2_json], status_code=200, headers=url2_headers)
-    target = gitlab.GitLab(lambda: requests.Session())
+    target = gitlab.GitLab(ROOT_URL, lambda: requests.Session())
     assert target.get(expected_url_initial) == [request1_json, request2_json]
     assert requests_mock.called is True
     assert requests_mock.call_count == 2
@@ -63,7 +64,7 @@ def test_gitlab_handles_a_unpaged_timeout_correctly(requests_mock):
         requests_mock.register_uri("GET", expected_url_2, exc=requests.exceptions.ConnectTimeout)
         requests_mock.register_uri("GET", expected_url_3, exc=requests.exceptions.ConnectTimeout)
         requests_mock.register_uri("GET", expected_url_4, exc=requests.exceptions.ConnectTimeout)
-        target = gitlab.GitLab(lambda: requests.Session())
+        target = gitlab.GitLab(ROOT_URL, lambda: requests.Session())
         target.get(expected_url_1)
 
 
@@ -89,7 +90,7 @@ def test_gitlab_handles_paged_timeout_correctly(requests_mock):
         requests_mock.register_uri("GET", expected_url_paged_2, exc=requests.exceptions.ConnectTimeout)
         requests_mock.register_uri("GET", expected_url_paged_3, exc=requests.exceptions.ConnectTimeout)
         requests_mock.register_uri("GET", expected_url_paged_4, exc=requests.exceptions.ConnectTimeout)
-        target = gitlab.GitLab(lambda: requests.Session())
+        target = gitlab.GitLab(ROOT_URL, lambda: requests.Session())
         target.get(expected_url_initial)
 
 
@@ -97,7 +98,7 @@ def test_gitlab_handles_responses_without_headers_correctly(requests_mock):
     expected_url = "http://gitlab.com/api/v4/user?per_page=20"
     requests_mock.register_uri("GET", expected_url, status_code=504, reason="Gateway timeout",
                                headers={"Content-Type": "application/text"})
-    target = gitlab.GitLab(lambda: requests.Session())
+    target = gitlab.GitLab(ROOT_URL, lambda: requests.Session())
     assert target.get(expected_url) is False
     assert requests_mock.called is True
     assert requests_mock.call_count == 1
@@ -119,7 +120,7 @@ def test_gitlab_handles_dynamic_page_size_reductions_with_success(requests_mock)
     requests_mock.register_uri("GET", expected_url_initial, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
     requests_mock.register_uri("GET", expected_url_paged, json=[request2_json], status_code=200, headers=url2_headers,
                                complete_qs=True)
-    target = gitlab.GitLab(lambda: requests.Session())
+    target = gitlab.GitLab(ROOT_URL, lambda: requests.Session())
     response = target.get(expected_url_initial)
     assert response == [request2_json]
     assert requests_mock.called is True
@@ -151,7 +152,7 @@ def test_gitlab_handles_dynamic_page_size_reductions_with_failure(requests_mock)
         requests_mock.register_uri("GET", expected_url_paged_2, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
         requests_mock.register_uri("GET", expected_url_paged_3, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
         requests_mock.register_uri("GET", expected_url_paged_4, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
-        target = gitlab.GitLab(lambda: requests.Session())
+        target = gitlab.GitLab(ROOT_URL, lambda: requests.Session())
         target.get(expected_url_initial)
 
 

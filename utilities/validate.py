@@ -6,9 +6,9 @@ import os
 
 from logging import warning, info
 from api import gitlab
-from utilities import constants
+from utilities import constants, types
 
-gitlab = gitlab.GitLab()
+gitlab = gitlab.GitLab(types.Arguments().url)
 
 
 def gitlab_api_keys():
