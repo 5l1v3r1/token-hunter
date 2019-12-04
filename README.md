@@ -36,14 +36,17 @@ pip3 install -r ./requirements.txt
 Then, you can run the tool as follows:
 
 ``` 
-usage: git_osint.py [-h] -g GROUP [-m] [-s] [-i] [-t] [-p PROXY] [-c CERT]
-                    [-l LOGFILE]
+usage: git_osint.py [-h] -g GROUP [-u URL] [-m] [-s] [-i] [-t] [-p PROXY]
+                    [-c CERT] [-l LOGFILE]
 
 Collect OSINT for GitLab groups and members. Optionally search the group and
 group members snippets, issues, and issue comments for sensitive data.
 
 optional arguments:
   -h, --help            show this help message and exit
+  -u URL, --url URL     Optional argument that specifies the root url for
+                        scanning. If the argument is not supplied, it defaults
+                        to 'https://gitlab.com'
   -m, --members         Includes group members personal projects, snippets,
                         issues, and issue comments in the search for secrets
   -s, --snippets        Searches the snippets associated with projects the
@@ -66,9 +69,9 @@ optional arguments:
 
 required arguments:
   -g GROUP, --group GROUP
-                        ID or URL encoded name of a GitLab group. This option,
-                        by itself, will display group projects and member
-                        names only.
+                        ID or HTML encoded name of a GitLab group. This
+                        option, by itself, will display group projects and
+                        member names only.
 ```
 
 Example:  `./git_osint.py -gmsi <123456>`
