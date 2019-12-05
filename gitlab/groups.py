@@ -1,7 +1,8 @@
 from logging import info
 from api import gitlab
+from utilities import types
 
-gitlab = gitlab.GitLab()
+gitlab = gitlab.GitLab(types.Arguments().url)
 
 
 def get(group):
