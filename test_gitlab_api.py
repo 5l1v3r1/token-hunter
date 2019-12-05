@@ -147,14 +147,15 @@ def test_gitlab_handles_dynamic_page_size_reductions_with_failure(requests_mock)
             "Content-Type": "application/json",
             "Link": '<https://gitlab.com/api/v4/groups/1/members?id=1&page=1&per_page=20>; rel="prev", <https://gitlab.com/api/v4/groups/1/members?id=1&page=1&per_page=20>; rel="first", <https://gitlab.com/api/v4/groups/1/members?id=1&page=2&per_page=20>; rel="last"'
         }
-        requests_mock.register_uri("GET", expected_url_initial, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
-        requests_mock.register_uri("GET", expected_url_paged_1, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
-        requests_mock.register_uri("GET", expected_url_paged_2, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
-        requests_mock.register_uri("GET", expected_url_paged_3, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
-        requests_mock.register_uri("GET", expected_url_paged_4, exc=requests.exceptions.ConnectTimeout, complete_qs=True)
+        requests_mock.register_uri("GET", expected_url_initial, exc=requests.exceptions.ConnectTimeout,
+                                   complete_qs=True)
+        requests_mock.register_uri("GET", expected_url_paged_1, exc=requests.exceptions.ConnectTimeout,
+                                   complete_qs=True)
+        requests_mock.register_uri("GET", expected_url_paged_2, exc=requests.exceptions.ConnectTimeout,
+                                   complete_qs=True)
+        requests_mock.register_uri("GET", expected_url_paged_3, exc=requests.exceptions.ConnectTimeout,
+                                   complete_qs=True)
+        requests_mock.register_uri("GET", expected_url_paged_4, exc=requests.exceptions.ConnectTimeout,
+                                   complete_qs=True)
         target = gitlab.GitLab(ROOT_URL, lambda: requests.Session())
         target.get(expected_url_initial)
-
-
-
-

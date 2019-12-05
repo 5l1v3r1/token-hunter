@@ -1,6 +1,3 @@
-import textwrap
-
-
 class Environment:
     @staticmethod
     def gitlab_api_token():
