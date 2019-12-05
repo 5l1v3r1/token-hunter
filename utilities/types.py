@@ -10,33 +10,33 @@ class Arguments:
         def __init__(self):
             parser = argparse.ArgumentParser(
                 description="Collect OSINT for GitLab groups and members.  Optionally search the "
-                            "group and group members snippets, issues, and issue comments for "
+                            "group and group members snippets, project issues, and issue discussions/comments for "
                             "sensitive data.")
             required_named = parser.add_argument_group('required arguments')
             required_named.add_argument('-g', '--group', type=str, action='append', required=True,
                                         help="ID or HTML encoded name of a GitLab group.  This option, by itself, "
                                              "will display group projects and member names only.")
             parser.add_argument('-u', '--url', default='https://gitlab.com',
-                                help="Optional argument that specifies the root url for scanning.  If the argument "
                                      "is not supplied, it defaults to 'https://gitlab.com'")
             parser.add_argument('-m', '--members', action='store_true',
-                                help="Includes group members personal projects, snippets, issues, and issue comments "
-                                     "in the search for secrets")
+                                help="Include group members personal projects and their related assets in the search"
+                                     "for sensitive data.")
             parser.add_argument('-s', '--snippets', action='store_true',
-                                help='Searches the snippets associated with projects the group maintains for secrets')
+                                help="Searches found projects for GitLab Snippets with sensitive data.")
             parser.add_argument('-i', '--issues', action='store_true',
-                                help="Searches the issues and related comments associated with the group for secrets")
+                                help="Searches found projects for GitLab Issues and discussions/comments with sensitive "
+                                     "data.")
             parser.add_argument('-t', '--timestamp', action='store_true',
                                 help='Disables display of start/finish times and originating IP to the output')
             parser.add_argument('-p', '--proxy', type=str, action='store',
-                                help='Proxies all HTTP and TLS requests using the provided URL matching the scheme:  '
+                                help='Proxies all requests using the provided URI matching the scheme:  '
                                      'http(s)://user:pass@10.10.10.10:8000')
             parser.add_argument('-c', '--cert', type=str, action='store',
-                                help='Used in tandem with -p (--proxy), this switch provides a fully qualified path to a certificate to verify TLS '
-                                     'connections. Provide a fully qualified path to the dynamic '
+                                help='Used in tandem with -p (--proxy), this switch provides a fully qualified path to a '
+                                     'certificate to verify TLS connections. Provide a fully qualified path to the dynamic '
                                      'cert. Example:  /Users/<username>/owasp_zap_root_ca.cer.')
             parser.add_argument('-l', '--logfile', type=str, action='store',
-                                help='Will APPEND found items to specified file.')
+                                help='Will APPEND all output to specified file.')
 
             if len(sys.argv) == 1:
                 parser.print_help(sys.stderr)

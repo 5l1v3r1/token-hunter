@@ -40,32 +40,32 @@ usage: git_osint.py [-h] -g GROUP [-u URL] [-m] [-s] [-i] [-t] [-p PROXY]
                     [-c CERT] [-l LOGFILE]
 
 Collect OSINT for GitLab groups and members. Optionally search the group and
-group members snippets, issues, and issue comments for sensitive data.
+group members snippets, project issues, and issue discussions/comments for
+sensitive data.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -u URL, --url URL     Optional argument that specifies the root url for
-                        scanning. If the argument is not supplied, it defaults
-                        to 'https://gitlab.com'
-  -m, --members         Includes group members personal projects, snippets,
-                        issues, and issue comments in the search for secrets
-  -s, --snippets        Searches the snippets associated with projects the
-                        group maintains for secrets
-  -i, --issues          Searches the issues and related comments associated
-                        with the group for secrets
+  -u URL, --url URL     Optional argument that specifies the root url of your
+                        GitLab instance. If the argument is not supplied, it
+                        defaults to 'https://gitlab.com'
+  -m, --members         Include group members personal projects and their
+                        related assets in the searchfor sensitive data.
+  -s, --snippets        Searches found projects for GitLab Snippets with
+                        sensitive data.
+  -i, --issues          Searches found projects for GitLab Issues and
+                        discussions/comments with sensitive data.
   -t, --timestamp       Disables display of start/finish times and originating
                         IP to the output
   -p PROXY, --proxy PROXY
-                        Proxies all HTTP and TLS requests using the provided
-                        URL matching the scheme:
-                        http(s)://user:pass@10.10.10.10:8000
+                        Proxies all requests using the provided URI matching
+                        the scheme: http(s)://user:pass@10.10.10.10:8000
   -c CERT, --cert CERT  Used in tandem with -p (--proxy), this switch provides
                         a fully qualified path to a certificate to verify TLS
                         connections. Provide a fully qualified path to the
                         dynamic cert. Example:
                         /Users/<username>/owasp_zap_root_ca.cer.
   -l LOGFILE, --logfile LOGFILE
-                        Will APPEND found items to specified file.
+                        Will APPEND all output to specified file.
 
 required arguments:
   -g GROUP, --group GROUP
