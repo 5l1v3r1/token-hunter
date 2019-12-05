@@ -1,3 +1,5 @@
+import textwrap
+
 
 class Environment:
     @staticmethod
@@ -23,3 +25,16 @@ class Requests:
     @staticmethod
     def retry_delay():
         return 4
+
+
+class Banner:
+    @staticmethod
+    def render():
+        print("")
+        print("   .---.  .----. .-. .-..----..-. .-..-. .-..-. .-..-. .-. .---. .----..----. ")
+        print("  {_   _}/  {}  \| |/ / | {_  |  `| || {_} || { } ||  `| |{_   _}| {_  | {}  }")
+        print("    | |  \      /| |\ \ | {__ | |\  || { } || {_} || |\  |  | |  | {__ | .-. |")
+        print("    `-'   `----' `-' `-'`----'`-' `-'`-' `-'`-----'`-' `-'  `-'  `----'`-' `-'")
+        print("")
+        print("  By GitLab Red Team (https://gitlab.com/gitlab-com/gl-security/gl-redteam)")
+        print("")
