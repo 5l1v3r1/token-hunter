@@ -17,7 +17,8 @@ class Arguments:
                                         help="ID or HTML encoded name of a GitLab group.  This option, by itself, "
                                              "will display group projects and member names only.")
             parser.add_argument('-u', '--url', default='https://gitlab.com',
-                                     "is not supplied, it defaults to 'https://gitlab.com'")
+                                help="An optional argument to specify the base URL of your GitLab instance.  If the "
+                                     "argument is not supplied, its defaulted to 'https://gitlab.com'")
             parser.add_argument('-m', '--members', action='store_true',
                                 help="Include group members personal projects and their related assets in the search"
                                      "for sensitive data.")
