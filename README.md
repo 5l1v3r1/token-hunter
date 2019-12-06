@@ -4,9 +4,7 @@ Collect OSINT for GitLab groups and members and search the group and group membe
 
 # How the tool works
 
-You provide a starting point, like a group ID on GitLab. token-hunter will use the appropriate API to find all projects, users and snippets associated with that starting point, and enumerate git projects and they own or contribute to and will list all the snippets associated with each project in the group. In addition, if you provide the `-s` switch, all [GitLab Snippets](https://docs.gitlab.com/ee/user/snippets.html) associated with each project in the group will be searched for sensitive information using the [set of regular expressions provided](./regexes.json). The starting set originated from open source project [TruffleHogRegex](https://github.com/dxa4481/truffleHogRegexes) and was appended to look for GitLab personal access tokens (PATs). You may alter this list as you see fit.
-
-All data is printed to the console, and is optionally logged to a file.
+Start by providing a starting point such as a group ID on GitLab.  Token-Hunter will use the starting GitLab group to find all associated projects for that group.  Configure the tool to look for secrets in assets related to the group.  Currently, the tool supports GitLab Snippets, Issues, and Discussions/Comments with plans for future expansion to other assets.  The tool is intended to be very configurable to allow for efficient discovery of sensitive data. 
 
 # Usage
 
