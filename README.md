@@ -1,6 +1,6 @@
-# token-hunter
+# Token-Hunter
 
-Collect OSINT for GitLab groups and members. You can optionally search the group and group members snippets, issues, and issue comments for sensitive data that may be included in these assets. The information gathered is intended to compliment and inform the use of additional tools such as [TruffleHog](https://github.com/dxa4481/truffleHog) or [GitRob](https://github.com/michenriksen/gitrob), which search git commit history using the regular expression matching.
+Collect OSINT for GitLab groups and members and search the group and group members' snippets, issues, and issue comments for sensitive data that may be included in these assets. The information gathered is intended to compliment and inform the use of additional tools such as [TruffleHog](https://github.com/dxa4481/truffleHog) or [GitRob](https://github.com/michenriksen/gitrob), which search git commit history using the regular expression matching.  Token-Hunter uses the same set of regular expressions as TruffleHog with a few additions for GitLab specific tokens.
 
 # How the tool works
 
