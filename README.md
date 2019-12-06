@@ -8,7 +8,7 @@ Start by providing a starting point such as a group ID on GitLab.  Token-Hunter 
 
 # Usage
 
-Before running the tool, you will need to generate a GitLab API key and export them it as an environment variable. This can be done as shown below:
+Before running the tool, you will need to generate a GitLab API key and export it as an environment variable. This can be done as shown below:
 
 ```
 export GITLAB_API_TOKEN=xxxxx
