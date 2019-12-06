@@ -4,7 +4,7 @@ Collect OSINT for [GitLab groups](https://docs.gitlab.com/ee/user/group/) and [m
 
 # How the tool works
 
-Start by providing a starting point such as a group ID on GitLab.  Token-Hunter will use the starting GitLab group to find all associated projects for that group and, optionally, the groups members.  Configure the tool to look for sensitive data in assets related to the group.  Token-Hunter uses the [same set of regular expressions as TruffleHog](https://github.com/dxa4481/truffleHogRegexes) with a few additions for GitLab specific tokens.  Token-Hunter depends on these [easily configurable regular expressions](https://gitlab.com/gitlab-com/gl-security/gl-redteam/token-hunter/blob/master/regexes.json) for accuracy and effectiveness.  Currently, the tool supports GitLab snippets, issues, and issue discussions with plans for future expansion to other assets.  The tool is intended to be very configurable to allow for efficient discovery of sensitive data in the assets you're specifically interested in.
+Start by providing a group ID for a specific group on GitLab.  You can find the group ID underneath the group name in the GitLab UI.  Token-Hunter will use the GitLab group ID to find all associated projects for that group and, optionally, the groups members personal projects.  Configure the tool to look for sensitive data in assets related to the projects it finds.  Token-Hunter uses the [same set of regular expressions as TruffleHog](https://github.com/dxa4481/truffleHogRegexes) with a few additions for GitLab specific tokens.  Token-Hunter depends on these [easily configurable regular expressions](https://gitlab.com/gitlab-com/gl-security/gl-redteam/token-hunter/blob/master/regexes.json) for accuracy and effectiveness.  Currently, the tool supports GitLab snippets, issues, and issue discussions with plans for future expansion to other assets.  The tool is intended to be very configurable to allow for efficient discovery of sensitive data in the assets you're specifically interested in.
 
 # Usage
 
@@ -21,14 +21,14 @@ git clone https://gitlab.com/gitlab-com/gl-security/gl-redteam/token-hunter.git
 pip3 install -r ./requirements.txt
 ```
 
-Then, you can run the tool as follows:
+Then, you can run the tool and specify your options as follows:
 
 ```
 usage: token-hunter.py [-h] -g GROUP [-u URL] [-m] [-s] [-i] [-t] [-p PROXY]
                     [-c CERT] [-l LOGFILE]
 
 Collect OSINT for GitLab groups and members. Optionally search the group and
-group members snippets, project issues, and issue discussions/comments for
+group members project snippets, issues, and issue discussions and comments for
 sensitive data.
 
 optional arguments:
@@ -62,7 +62,7 @@ required arguments:
                         member names only.
 ```
 
-# Example Usages
+# Usage Examples
 
 `./token-hunter.py -g 123456`
 
@@ -80,9 +80,9 @@ Finds all projects for group 123456 as well as all of the personal projects for 
 
 Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells token-crypt to search GitLab snippets associated with each found project for sensitive data.  The `-i` switch tell token-crypt to also search issues and discussions  for each of the found projects for sensitive data.  **CAUTION** This configuration has the potential to pull a lot of data!
 
-`./token-hunter.py -gmsit 123456 -u https://mygitlab-instance.com -p http://127.0.01:8080 -c /Users/hacker/owasp_zap_ca_cert.cer`
+`./token-hunter.py -gmsit 123456 -u https://mygitlab-instance.com -p http://127.0.01:8080 -c /Users/hacker/owasp_zap_ca_cert.cer -l ./appended-output.txt`
 
-Performs the same asset searches as the previous example against a self-hosted installation of GitLab running at `https://mygitlab-instance.com`.  Requests and responses that the tool generates are proxied through `http://127.0.01:8080` using the certificate defined at the fully qualified path `/Users/hacker/owasp_zap_ca_cert.cer` to decrypt the TLS traffic.  Timestamps and origin IP are excluded from the output with the `-t` switch.
+Performs the same asset searches as the previous example against a self-hosted installation of GitLab running at `https://mygitlab-instance.com`.  Requests and responses that the tool generates are proxied through `http://127.0.01:8080` using the certificate defined at the fully qualified path `/Users/hacker/owasp_zap_ca_cert.cer` to decrypt the TLS traffic.  Timestamps and origin IP are excluded from the output with the `-t` switch.  Output is *APPENDED* to the `./appended-output.txt` file with the `-l` switch.
 
 # Contributing
 
@@ -94,6 +94,6 @@ Contributions are welcome from the community.  You can find and add to the issue
 1. In the root directory, install dependencies with `pip3 install -r ./requirements.txt`
 1. [Create a branch](https://docs.gitlab.com/ee/gitlab-basics/create-branch.html) for the changes you'd like to make.
 1. Modify or add test coverage in the existing `./test_*` files, adding new files as needed.
-1. Execute tests with `pytest -v` to make sure they pass.
+1. Execute tests, written in [pytest](http://doc.pytest.org/), with `pytest -v` to make sure they pass.
 1. Create a merge requests for your changes and tag `@gitlab-red-team` to review and merge it.
 1. Repeat!
