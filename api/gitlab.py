@@ -27,7 +27,7 @@ def build_session():
     session = requests.session()
     session.headers.update({
         "PRIVATE-TOKEN": os.getenv(constants.Environment.gitlab_api_token()),
-        "USER-AGENT": "git_osint"
+        "USER-AGENT": "token-hunter"
     })
     session.proxies = get_proxies()
     session.verify = get_cert()
