@@ -14,9 +14,10 @@ Before running the tool, you will need to [generate a GitLab Personal Access Tok
 export GITLAB_API_TOKEN=xxxxx
 ```
 
-Next, install dependencies with:
+Next, clone the repository and install dependencies with:
 
 ```
+git clone https://gitlab.com/gitlab-com/gl-security/gl-redteam/token-hunter.git
 pip3 install -r ./requirements.txt
 ```
 
