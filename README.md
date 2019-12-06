@@ -1,14 +1,14 @@
 # Token-Hunter
 
-Collect OSINT for GitLab groups and members and search the group and group members' snippets, issues, and issue comments for sensitive data that may be included in these assets. The information gathered is intended to compliment and inform the use of additional tools such as [TruffleHog](https://github.com/dxa4481/truffleHog) or [GitRob](https://github.com/michenriksen/gitrob), which search git commit history using the regular expression matching.  Token-Hunter uses the same set of regular expressions as TruffleHog with a few additions for GitLab specific tokens.
+Collect OSINT for [GitLab groups](https://docs.gitlab.com/ee/user/group/) and [members](https://docs.gitlab.com/ee/user/project/members/#share-project-with-group) and search the group and group members' [snippets](https://docs.gitlab.com/ee/user/snippets.html), [issues](https://docs.gitlab.com/ee/user/project/issues/), and [issue discussions](https://docs.gitlab.com/ee/api/discussions.html#discussions-api) for sensitive data that may be included in these assets. The information gathered is intended to compliment and inform the use of additional tools such as [TruffleHog](https://github.com/dxa4481/truffleHog) or [GitRob](https://github.com/michenriksen/gitrob), which search git commit history using a similar technique of regular expression matching.  
 
 # How the tool works
 
-Start by providing a starting point such as a group ID on GitLab.  Token-Hunter will use the starting GitLab group to find all associated projects for that group.  Configure the tool to look for secrets in assets related to the group.  Currently, the tool supports GitLab Snippets, Issues, and Discussions/Comments with plans for future expansion to other assets.  The tool is intended to be very configurable to allow for efficient discovery of sensitive data. 
+Start by providing a starting point such as a group ID on GitLab.  Token-Hunter will use the starting GitLab group to find all associated projects for that group and, optionally, the groups members.  Configure the tool to look for sensitive data in assets related to the group.  Token-Hunter uses the [same set of regular expressions as TruffleHog](https://github.com/dxa4481/truffleHogRegexes) with a few additions for GitLab specific tokens.  Token-Hunter depends on these [easily configurable regular expressions](https://gitlab.com/gitlab-com/gl-security/gl-redteam/token-hunter/blob/master/regexes.json) for accuracy and effectiveness.  Currently, the tool supports GitLab snippets, issues, and issue discussions with plans for future expansion to other assets.  The tool is intended to be very configurable to allow for efficient discovery of sensitive data in the assets you're specifically interested in.
 
 # Usage
 
-Before running the tool, you will need to generate a GitLab API key and export it as an environment variable. This can be done as shown below:
+Before running the tool, you will need to [generate a GitLab Personal Access Token (PAT)](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) and export it as an environment variable. This can be done as shown below:
 
 ```
 export GITLAB_API_TOKEN=xxxxx
