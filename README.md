@@ -61,22 +61,34 @@ required arguments:
                         member names only.
 ```
 
-Example: `./token-hunter.py -gmsi <123456>`
+# Example Usages
 
-Runs token-hunter for group with ID 123456\. You can find the group ID for any group just underneath its name when viewing a group in the UI. The `-m` switch tells token-hunter to also dump information on any personal projects maintained by the members of that group. The `-s` switch tells token-hunter to search the [snippets](https://docs.gitlab.com/ee/user/snippets.html) maintained by the group and, since `-m` was provided, the groups members. The `-i` switch also tells token-hunter to search the [issues](https://docs.gitlab.com/ee/user/project/issues/) entered by the group and, since `-m` was provided, the issues on any of the group members personal projects for sensitive data.
+`./token-hunter.py -g 123456`
 
-# Project Status
+The simplest use case is to return all the projects associated with a group by providing the group ID.  You can find the group ID underneath the group name in the GitLab UI.  No token searches are performed with this configuration.
 
-Currently, only the following functions are implemented:
+`./token-hunter.py -gm 123456`
 
-- GitLab group
-- GitLab snippets search for secrets
+Finds all projects for group 123456 as well as all of the personal projects for the group members.  No token searches are performed with this configuration.
 
-The following will be added:
+`./token-hunter.py -gms 123456`
 
-- GitLab project
+Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells token-crypt to search GitLab Snippets associated with each found project for sensitive data.
 
-The following are possible future improvements:
+`./token-hunter.py -gmsi 123456`
 
-- Cross-referencing between GitHub and GitLab
-- Additional social media sites like StackOverflow, Twitter, etc
+Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells token-crypt to search GitLab Snippets associated with each found project for sensitive data.  The `-i` switch tell token-crypt to also search issues and discussions/comments for each of the found projects for sensitive data.  **CAUTION** This configuration has the potential to pull a lot of data!
+
+# Contributing
+
+Contributions are welcome from the community.  You can find and add to the issue list, submit merge requests, and add to the existing discussions.  Token-Hunter is written in python 3.  To make a code contribution:
+
+1. [Install python version 3](https://realpython.com/installing-python/)
+1. Install pip version 3 to manage dependencies using the guide above.
+1. Clone the repository
+1. In the root directory, install dependencies with `pip3 install -r ./requirements.txt`
+1. [Create a branch](https://docs.gitlab.com/ee/gitlab-basics/create-branch.html) for the changes you'd like to make.
+1. Modify or add test coverage in the existing `./test_*` files, adding new files as needed.
+1. Execute tests with `pytest -v` to make sure they pass.
+1. Create a merge requests for your changes and tag `@gitlab-red-team` to review and merge it.
+1. Repeat!
