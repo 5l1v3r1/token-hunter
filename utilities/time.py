@@ -14,10 +14,10 @@ def get_current(timezone):
 
 def log_time_stamp_start():
     if not args.timestamp:
-        info("##### Git_OSINT started at UTC %s from IP %s##### ",
+        info("##### token-hunter started at UTC %s from IP %s##### ",
              get_current(datetime.timezone.utc), identity.get_public_ip())
 
 
 def log_time_stamp_end():
     if not args.timestamp:
-        info("##### Git_OSINT finished at UTC %s ##### ", get_current(datetime.timezone.utc))
+        info("##### token-hunter finished at UTC %s ##### ", get_current(datetime.timezone.utc))

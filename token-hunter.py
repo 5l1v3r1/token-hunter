@@ -6,7 +6,6 @@ from gitlab import analyzer as gitlab_analyzer
 
 
 def main():
-
     try:
         log.configure()
         time.log_time_stamp_start()

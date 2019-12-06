@@ -8,8 +8,3 @@ gitlab = gitlab.GitLab(types.Arguments().url)
 def get(group):
     info("[*] Fetching group details for %s", group)
     return gitlab.get_group(group)
-
-
-
-
-

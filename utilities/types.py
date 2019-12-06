@@ -4,6 +4,8 @@ import re
 import argparse
 import sys
 
+from utilities import constants
+
 
 class Arguments:
     class __Arguments:
@@ -38,6 +40,8 @@ class Arguments:
                                      'cert. Example:  /Users/<username>/owasp_zap_root_ca.cer.')
             parser.add_argument('-l', '--logfile', type=str, action='store',
                                 help='Will APPEND all output to specified file.')
+
+            constants.Banner.render()
 
             if len(sys.argv) == 1:
                 parser.print_help(sys.stderr)
