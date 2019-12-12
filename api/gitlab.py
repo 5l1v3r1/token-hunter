@@ -38,7 +38,7 @@ class GitLab:
 
     def __init__(self, base_url, session_builder=build_session):
         self.http = http.Http(session_builder)
-        self.base_url = base_url + "/api/v4/"
+        self.base_url = base_url + "/api/v4"
 
     def get_issue_comments(self, project_id, issue_id):
         return self.get('{}/projects/{}/issues/{}/discussions'.format(self.base_url, project_id, issue_id))
