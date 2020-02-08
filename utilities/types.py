@@ -95,6 +95,8 @@ class SecretsMonitor:
         for key in self.regexes:
             regexp_number += 1
             sanitized_group_name = re.sub(r'\W+', '_',  key)
+            while sanitized_group_name in self.regexp_name_mapping:
+                sanitized_group_name += "_%s" % regexp_number
             self.regexp_name_mapping[sanitized_group_name] = key
             self.merged_regexpes_string += '(?P<{key}>{regexp})'.format(key=sanitized_group_name,
                                                                         regexp=self.regexes[key])
