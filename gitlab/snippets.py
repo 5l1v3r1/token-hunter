@@ -19,7 +19,7 @@ def get_all(projects):
 
 
 def sniff_secrets(snippets):
-    if len(snippets.keys()) == 0:
+    if len(snippets) == 0:
         return []
     secrets = []
     raw_data = {}
