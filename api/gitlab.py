@@ -89,12 +89,12 @@ class GitLab:
             # The "Link" header is returned when there is more than one page of
             # results. GitLab asks that we use this link instead of crafting
             # our own.
-            if 'Link' in response.headers.keys():
+            if 'Link' in response.headers:
                 # initialize a new variable to begin compounding multi-page
                 # results
                 all_results = response.json()
                 # Now, loop through until there is no 'next' link provided
-                while 'Link' in response.headers.keys() and 'rel="next"' in response.headers['Link']:
+                while 'Link' in response.headers and 'rel="next"' in response.headers['Link']:
                     # Using print instead of logging, we don't want the per-page
                     # status update in the log file
 

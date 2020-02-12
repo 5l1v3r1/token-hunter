@@ -20,7 +20,7 @@ def analyze():
         all_members = members.get_all(group)
 
         if args.members:
-            for member in all_members.keys():
+            for member in all_members:
                 personal_projects.update(projects.all_member_projects(member))
 
         all_projects = {**group_projects, **personal_projects}

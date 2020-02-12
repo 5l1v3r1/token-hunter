@@ -92,7 +92,7 @@ class SecretsMonitor:
             self.regexes[key] = re.compile(self.regexes[key])
 
     def sniff_secrets(self, content):
-        if len(content.keys()) == 0:
+        if len(content) == 0:
             return []
         secrets = []
         for web_url, raw_data in content.items():
