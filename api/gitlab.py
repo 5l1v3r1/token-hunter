@@ -87,39 +87,33 @@ class GitLab:
 
         response = self.http.get_with_retry_and_paging_adjustment(url)
 
-        if response and response.status_code == 200:
-            # The "Link" header is returned when there is more than one page of
-            # results. GitLab asks that we use this link instead of crafting
-            # our own.
-            if 'Link' in response.headers:
-                # initialize a new variable to begin compounding multi-page
-                # results
-                all_results = response.json()
-                # Now, loop through until there is no 'next' link provided
-                while 'Link' in response.headers and 'rel="next"' in response.headers['Link']:
-                    # Using print instead of logging, we don't want the per-page
-                    # status update in the log file
-
-                    regex = re.compile(r'<([^<>]*?)>; rel="next"')
-                    next_url = re.findall(regex, response.headers['Link'])[0]
-                    if next_url in self.visited_urls:
-                        continue
-                    else:
-                        self.visited_urls[next_url] = None
-                    # Add the individual response to the collective
-                    response = self.http.get_with_retry_and_paging_adjustment(next_url)
-                    if response.status_code == 200:
-                        all_results += response.json()
-                    else:
-                        warning("[!] Error (%s) processing pagination URL: %s", response.status_code, next_url)
-
-                # Return the collective results
-                return all_results
-
+        if not (response and response.status_code == 200):
+            # If code not 200, no results to process
+            return False
+        # The "Link" header is returned when there is more than one page of
+        # results. GitLab asks that we use this link instead of crafting
+        # our own.
+        if 'Link' not in response.headers:
             # Otherwise, return just the single result
-            if response.headers["Content-Type"] == "application/json":
-                return response.json()
-            return response.text
+            return response.json() if response.headers["Content-Type"] == "application/json" else response.text
+        # initialize a new variable to begin compounding multi-page
+        # results
+        all_results = response.json()
+        regex = re.compile(r'<([^<>]*?)>; rel="next"')
+        # Now, loop through until there is no 'next' link provided
+        while 'Link' in response.headers and 'rel="next"' in response.headers['Link']:
+            # Using print instead of logging, we don't want the per-page
+            # status update in the log file
+            next_url = re.findall(regex, response.headers['Link'])[0]
+            # Add the individual response to the collective
+            response = self.http.get_with_retry_and_paging_adjustment(next_url)
+            if response.status_code == 200:
+                all_results += response.json()
+            else:
+                warning("[!] Error (%s) processing pagination URL: %s", response.status_code, next_url)
+        # Return the collective results
+        return all_results
 
-        # If code not 200, no results to process
-        return False
+
+
+
