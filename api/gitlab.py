@@ -101,8 +101,6 @@ class GitLab:
         all_results = response.json()
         # Now, loop through until there is no 'next' link provided
         while 'Link' in response.headers and 'rel="next"' in response.headers['Link']:
-            # Using print instead of logging, we don't want the per-page
-            # status update in the log file
             next_url = re.findall(self.next_page_regex, response.headers['Link'])[0]
             # Add the individual response to the collective
             response = self.http.get_with_retry_and_paging_adjustment(next_url)
