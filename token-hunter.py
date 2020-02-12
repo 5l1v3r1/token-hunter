@@ -12,9 +12,9 @@ def main():
         validate.environment()
         validate.gitlab_api_keys()
         gitlab_analyzer.analyze()
-        time.log_time_stamp_end()
     except KeyboardInterrupt:
         info("[!] Keyboard Interrupt, abandon ship!")
+    finally:
         time.log_time_stamp_end()
 
 
