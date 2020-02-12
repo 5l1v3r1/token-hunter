@@ -40,6 +40,7 @@ class GitLab:
         self.http = http.Http(session_builder)
         self.base_url = base_url + "/api/v4"
         self.visited_urls = {}
+        self.next_page_regex = re.compile(r'<([^<>]*?)>; rel="next"')
 
     def get_issue_comments(self, project_id, issue_id):
         return self.get('{}/projects/{}/issues/{}/discussions'.format(self.base_url, project_id, issue_id))
@@ -84,7 +85,6 @@ class GitLab:
               (https://docs.gitlab.com/ee/api/README.html#pagination)
         """
 
-
         response = self.http.get_with_retry_and_paging_adjustment(url)
 
         if not (response and response.status_code == 200):
@@ -99,12 +99,9 @@ class GitLab:
         # initialize a new variable to begin compounding multi-page
         # results
         all_results = response.json()
-        regex = re.compile(r'<([^<>]*?)>; rel="next"')
         # Now, loop through until there is no 'next' link provided
         while 'Link' in response.headers and 'rel="next"' in response.headers['Link']:
-            # Using print instead of logging, we don't want the per-page
-            # status update in the log file
-            next_url = re.findall(regex, response.headers['Link'])[0]
+            next_url = re.findall(self.next_page_regex, response.headers['Link'])[0]
             # Add the individual response to the collective
             response = self.http.get_with_retry_and_paging_adjustment(next_url)
             if response.status_code == 200:

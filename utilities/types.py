@@ -86,7 +86,7 @@ class Secret:
 class SecretsMonitor:
 
     def __init__(self):
-        self.merged_regexpes_string = ''
+        self.merged_regexes_string = ''
         self.regexp_name_mapping = {}
         with open(os.path.join(os.path.dirname(__file__), "../regexes.json"), 'r') as f:
             self.regexes = json.loads(f.read())
@@ -98,13 +98,12 @@ class SecretsMonitor:
             while sanitized_group_name in self.regexp_name_mapping:
                 sanitized_group_name += "_%s" % regexp_number
             self.regexp_name_mapping[sanitized_group_name] = key
-            self.merged_regexpes_string += '(?P<{key}>{regexp})'.format(key=sanitized_group_name,
+            self.merged_regexes_string += '(?P<{key}>{regexp})'.format(key=sanitized_group_name,
                                                                         regexp=self.regexes[key])
             self.regexes[key] = re.compile(self.regexes[key])
             if regexp_number < total_regexps:
-                self.merged_regexpes_string += '|'
-        self.merged_regexpes_compile = re.compile(self.merged_regexpes_string)
-
+                self.merged_regexes_string += '|'
+        self.merged_regexes_compile = re.compile(self.merged_regexes_string)
 
     def sniff_secrets(self, content):
         if len(content) == 0:
@@ -120,7 +119,7 @@ class SecretsMonitor:
         result = {}
         if not content:
             return result
-        match = self.merged_regexpes_compile.search(content)
+        match = self.merged_regexes_compile.search(content)
         if not match:
             return result
         for group, value in match.groupdict().items():
