@@ -8,7 +8,7 @@ Start by providing a group ID for a specific group on GitLab.  You can find the 
 
 # Usage
 
-Before running the tool, you will need to [generate a GitLab Personal Access Token (PAT)](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) and export it as an environment variable. This can be done as shown below:
+Before running the tool, you will need to [generate a GitLab Personal Access Token (PAT)](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) and export it as an environment variable. This can be done as shown below (please select `api` in the `scopes` section):
 
 ```
 export GITLAB_API_TOKEN=xxxxx
