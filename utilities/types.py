@@ -86,10 +86,25 @@ class Secret:
 class SecretsMonitor:
 
     def __init__(self):
+        self.merged_regexpes_string = ''
+        self.regexp_name_mapping = {}
         with open(os.path.join(os.path.dirname(__file__), "../regexes.json"), 'r') as f:
             self.regexes = json.loads(f.read())
+        regexp_number = 0
+        total_regexps = len(self.regexes)
         for key in self.regexes:
+            regexp_number += 1
+            sanitized_group_name = re.sub(r'\W+', '_',  key)
+            while sanitized_group_name in self.regexp_name_mapping:
+                sanitized_group_name += "_%s" % regexp_number
+            self.regexp_name_mapping[sanitized_group_name] = key
+            self.merged_regexpes_string += '(?P<{key}>{regexp})'.format(key=sanitized_group_name,
+                                                                        regexp=self.regexes[key])
             self.regexes[key] = re.compile(self.regexes[key])
+            if regexp_number < total_regexps:
+                self.merged_regexpes_string += '|'
+        self.merged_regexpes_compile = re.compile(self.merged_regexpes_string)
+
 
     def sniff_secrets(self, content):
         if len(content) == 0:
@@ -105,8 +120,12 @@ class SecretsMonitor:
         result = {}
         if not content:
             return result
-        for key in self.regexes:
-            match = self.regexes[key].search(content)
-            if match:
-                result.update({key: match.group()})
+        match = self.merged_regexpes_compile.search(content)
+        if not match:
+            return result
+        for group, value in match.groupdict().items():
+            if value is None:
+                continue
+            mapped_name = self.regexp_name_mapping[group]
+            result.update({mapped_name: value})
         return result
