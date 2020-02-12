@@ -68,19 +68,19 @@ required arguments:
 
 The simplest use case is to return all the project URLs associated with a group by providing the group ID with the `-g` switch.  You can find the group ID underneath the group name in the GitLab UI.  No token searches are performed with this configuration.
 
-`./token-hunter.py -gm 123456`
+`./token-hunter.py -g 123456 -m`
 
 Finds all projects for group 123456 as well as all of the personal projects for the group members.  No token searches are performed with this configuration.
 
-`./token-hunter.py -gms 123456`
+`./token-hunter.py -g 123456 -ms`
 
-Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells token-crypt to search GitLab snippets associated with each found project for sensitive data.
+Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells Token-Hunter to search GitLab snippets associated with each found project for sensitive data.
 
-`./token-hunter.py -gmsi 123456`
+`./token-hunter.py -g 123456 -msi`
 
-Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells token-crypt to search GitLab snippets associated with each found project for sensitive data.  The `-i` switch tell token-crypt to also search issues and discussions  for each of the found projects for sensitive data.  **CAUTION** This configuration has the potential to pull a lot of data!
+Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells Token-Hunter to search GitLab snippets associated with each found project for sensitive data.  The `-i` switch tell Token-Hunter to also search issues and discussions  for each of the found projects for sensitive data.  **CAUTION** This configuration has the potential to pull a lot of data!
 
-`./token-hunter.py -gmsit 123456 -u https://mygitlab-instance.com -p http://127.0.01:8080 -c /Users/hacker/owasp_zap_ca_cert.cer -l ./appended-output.txt`
+`./token-hunter.py -g 123456 -msit -u https://mygitlab-instance.com -p http://127.0.01:8080 -c /Users/hacker/owasp_zap_ca_cert.cer -l ./appended-output.txt`
 
 Performs the same asset searches as the previous example against a self-hosted installation of GitLab running at `https://mygitlab-instance.com`.  Requests and responses that the tool generates are proxied through `http://127.0.01:8080` using the certificate defined at the fully qualified path `/Users/hacker/owasp_zap_ca_cert.cer` to decrypt the TLS traffic.  Timestamps and origin IP are excluded from the output with the `-t` switch.  Output is *APPENDED* to the `./appended-output.txt` file with the `-l` switch.
 
