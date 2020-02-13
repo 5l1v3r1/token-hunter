@@ -94,12 +94,10 @@ class SecretsMonitor:
         total_regexps = len(self.regexes)
         for key in self.regexes:
             regexp_number += 1
-            sanitized_group_name = re.sub(r'\W+', '_',  key)
-            while sanitized_group_name in self.regexp_name_mapping:
-                sanitized_group_name += "_%s" % regexp_number
-            self.regexp_name_mapping[sanitized_group_name] = key
-            self.merged_regexes_string += '(?P<{key}>{regexp})'.format(key=sanitized_group_name,
-                                                                        regexp=self.regexes[key])
+            regexp_group_name = "group_%s" % regexp_number
+            self.regexp_name_mapping[regexp_group_name] = key
+            self.merged_regexes_string += '(?P<{key}>{regexp})'.format(key=regexp_group_name,
+                                                                       regexp=self.regexes[key])
             self.regexes[key] = re.compile(self.regexes[key])
             if regexp_number < total_regexps:
                 self.merged_regexes_string += '|'
