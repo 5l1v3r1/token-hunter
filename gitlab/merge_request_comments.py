@@ -9,8 +9,8 @@ def get_all(project_id, mr_id, mr_web_url):
     comments = []
     detail = gitlab.get_merge_request_comments(project_id, mr_id)
     if validate.api_result(detail):
+        legit_comments = 0
         for item in detail:
-            legit_comments = 0
             for note in item['notes']:
                 if note['system']:  # ignore system notes:  https://docs.gitlab.com/ee/api/discussions.html
                     continue
