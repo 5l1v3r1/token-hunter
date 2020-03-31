@@ -1,4 +1,3 @@
-from utilities import types
 from api import gitlab
 from utilities import validate, types
 from logging import info
