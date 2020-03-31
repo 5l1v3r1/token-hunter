@@ -29,7 +29,7 @@ class Arguments:
             parser.add_argument('-i', '--issues', action='store_true',
                                 help="Searches found projects for GitLab Issues and discussions/comments with sensitive "
                                      "data.")
-            parser.add_argument('-mr', '--mergerequests', action='store_true',
+            parser.add_argument('-r', '--mergerequests', action='store_true',
                                 help="Searches found projects for GitLab Merge Requests and discussions/comments with "
                                      "sensitive data.")
             parser.add_argument('-t', '--timestamp', action='store_true',
