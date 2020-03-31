@@ -13,3 +13,8 @@ def get_all(project_id, project_url):
         for item in details:
             merge_requests.append(types.Issue(item['iid'], item['web_url'], item['title']))
     return merge_requests
+
+
+def sniff_secrets(mr):
+    monitor = types.SecretsMonitor()
+    return monitor.sniff_secrets({mr.web_url: mr.description})

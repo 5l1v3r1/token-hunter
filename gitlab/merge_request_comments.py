@@ -19,3 +19,8 @@ def get_all(project_id, mr_id, mr_web_url):
         if legit_comments > 0:
             info("[*] Found %s comments for merge request %s", legit_comments, mr_web_url)
     return comments
+
+
+def sniff_secrets(comment):
+    monitor = types.SecretsMonitor()
+    return monitor.sniff_secrets({comment.parent_url: comment.comment_body})
