@@ -24,23 +24,25 @@ pip3 install -r ./requirements.txt
 Then, you can run the tool and specify your options as follows:
 
 ```
-usage: token-hunter.py [-h] -g GROUP [-u URL] [-m] [-s] [-i] [-t] [-p PROXY]
-                    [-c CERT] [-l LOGFILE]
+usage: token-hunter.py [-h] -g GROUP [-u URL] [-m] [-s] [-i] [-r] [-t]
+                       [-p PROXY] [-c CERT] [-l LOGFILE]
 
 Collect OSINT for GitLab groups and members. Optionally search the group and
-group members project snippets, issues, and issue discussions and comments for
+group members snippets, project issues, and issue discussions/comments for
 sensitive data.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -u URL, --url URL     Optional argument that specifies the root url of your
-                        GitLab instance. If the argument is not supplied, it
-                        defaults to 'https://gitlab.com'
+  -u URL, --url URL     An optional argument to specify the base URL of your
+                        GitLab instance. If the argument is not supplied, its
+                        defaulted to 'https://gitlab.com'
   -m, --members         Include group members personal projects and their
                         related assets in the searchfor sensitive data.
   -s, --snippets        Searches found projects for GitLab Snippets with
                         sensitive data.
   -i, --issues          Searches found projects for GitLab Issues and
+                        discussions/comments with sensitive data.
+  -r, --mergerequests   Searches found projects for GitLab Merge Requests and
                         discussions/comments with sensitive data.
   -t, --timestamp       Disables display of start/finish times and originating
                         IP to the output
@@ -76,9 +78,9 @@ Finds all projects for group 123456 as well as all of the personal projects for 
 
 Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells Token-Hunter to search GitLab snippets associated with each found project for sensitive data.
 
-`./token-hunter.py -g 123456 -msi`
+`./token-hunter.py -g 123456 -msir`
 
-Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells Token-Hunter to search GitLab snippets associated with each found project for sensitive data.  The `-i` switch tell Token-Hunter to also search issues and discussions  for each of the found projects for sensitive data.  **CAUTION** This configuration has the potential to pull a lot of data!
+Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells Token-Hunter to search GitLab snippets associated with each found project for sensitive data.  The `-i` switch tells Token-Hunter to also search issues and discussions  for each of the found projects for sensitive data.  The `-r` switch tells Token-Hunter to also search merge requests and merge request discussions for each of the found projects.  **CAUTION:** This configuration has the potential to pull a lot of data!
 
 `./token-hunter.py -g 123456 -msit -u https://mygitlab-instance.com -p http://127.0.01:8080 -c /Users/hacker/owasp_zap_ca_cert.cer -l ./appended-output.txt`
 
