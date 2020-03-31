@@ -1,11 +1,16 @@
 from logging import info, warning
 from utilities import types
-from gitlab import projects, snippets, groups, issues, members, issue_comments
+from gitlab import \
+    projects, snippets, groups, \
+    issues, members, issue_comments, \
+    merge_requests, merge_request_comments
 
 
 def analyze():
     all_issues = []
-    all_comments = []
+    all_issue_comments = []
+    all_merge_requests = []
+    all_mr_comments = []
     personal_projects = {}
     all_snippets = {}
     args = types.Arguments()
@@ -48,10 +53,22 @@ def analyze():
                     # loop the comments for each issue searching for secrets in the body
                     comments = issue_comments.get_all(project_id, issue.ident, issue.web_url)
                     for comment in comments:
-                        all_comments.append(comment)
+                        all_issue_comments.append(comment)
+
+        if args.mergerequests:
+            info("[*] Fetching merge requests discussions for %s projects", len(all_projects))
+            for project_id, project_url in all_projects.items():
+                project_merge_requests = merge_requests.get_all(project_id, project_url)
+                for mr in project_merge_requests:
+                    all_merge_requests.append(mr)
+
+                    # loop the comments for each merge request searching for secrets in the body
+                    comments = merge_request_comments.get_all(project_id, mr.ident, mr.web_url)
+                    for comment in comments:
+                        all_mr_comments.append(comment)
 
         get_snippet_secrets(all_snippets, all_projects, args)
-        get_issues_comments_secrets(all_issues, all_comments, all_projects, args)
+        get_issues_comments_secrets(all_issues, all_issue_comments, all_projects, args)
 
 
 def get_issues_comments_secrets(all_issues, all_comments, all_projects, args):

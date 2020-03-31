@@ -1,0 +1,21 @@
+from api import gitlab
+from utilities import validate, types
+from logging import info
+
+gitlab = gitlab.GitLab(types.Arguments().url)
+
+
+def get_all(project_id, mr_id, mr_web_url):
+    comments = []
+    detail = gitlab.get_merge_request_comments(project_id, mr_id)
+    if validate.api_result(detail):
+        for item in detail:
+            legit_comments = 0
+            for note in item['notes']:
+                if note['system']:  # ignore system notes:  https://docs.gitlab.com/ee/api/discussions.html
+                    continue
+                comments.append(types.Comment('issue', mr_web_url, note['body']))
+                legit_comments += 1
+        if legit_comments > 0:
+            info("[*] Found %s comments for merge request %s", legit_comments, mr_web_url)
+    return comments
