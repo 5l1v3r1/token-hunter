@@ -14,7 +14,7 @@ def get_all(project_id, mr_id, mr_web_url):
             for note in item['notes']:
                 if note['system']:  # ignore system notes:  https://docs.gitlab.com/ee/api/discussions.html
                     continue
-                comments.append(types.Comment('issue', mr_web_url, note['body']))
+                comments.append(types.Comment('merge_request', mr_web_url, note['body']))
                 legit_comments += 1
         if legit_comments > 0:
             info("[*] Found %s comments for merge request %s", legit_comments, mr_web_url)
