@@ -29,6 +29,9 @@ class Arguments:
             parser.add_argument('-i', '--issues', action='store_true',
                                 help="Searches found projects for GitLab Issues and discussions/comments with sensitive "
                                      "data.")
+            parser.add_argument('-mr', '--mergerequests', action='store_true',
+                                help="Searches found projects for GitLab Merge Requests and discussions/comments with "
+                                     "sensitive data.")
             parser.add_argument('-t', '--timestamp', action='store_true',
                                 help='Disables display of start/finish times and originating IP to the output')
             parser.add_argument('-p', '--proxy', type=str, action='store',

@@ -1,11 +1,16 @@
 from logging import info, warning
 from utilities import types
-from gitlab import projects, snippets, groups, issues, members, issue_comments
+from gitlab import \
+    projects, snippets, groups, \
+    issues, members, issue_comments, \
+    merge_requests, merge_request_comments
 
 
 def analyze():
     all_issues = []
-    all_comments = []
+    all_issue_comments = []
+    all_merge_requests = []
+    all_mr_comments = []
     personal_projects = {}
     all_snippets = {}
     args = types.Arguments()
@@ -48,26 +53,55 @@ def analyze():
                     # loop the comments for each issue searching for secrets in the body
                     comments = issue_comments.get_all(project_id, issue.ident, issue.web_url)
                     for comment in comments:
-                        all_comments.append(comment)
+                        all_issue_comments.append(comment)
+
+        if args.mergerequests:
+            info("[*] Fetching merge requests discussions for %s projects", len(all_projects))
+            for project_id, project_url in all_projects.items():
+                project_merge_requests = merge_requests.get_all(project_id, project_url)
+                for mr in project_merge_requests:
+                    all_merge_requests.append(mr)
+
+                    # loop the comments for each merge request searching for secrets in the body
+                    comments = merge_request_comments.get_all(project_id, mr.ident, mr.web_url)
+                    for comment in comments:
+                        all_mr_comments.append(comment)
 
         get_snippet_secrets(all_snippets, all_projects, args)
-        get_issues_comments_secrets(all_issues, all_comments, all_projects, args)
+        get_issues_comments_secrets(all_issues, all_issue_comments, all_projects, args)
+        get_merge_reqs_comments_secrets(all_merge_requests, all_mr_comments, all_projects, args)
 
 
-def get_issues_comments_secrets(all_issues, all_comments, all_projects, args):
+def get_merge_reqs_comments_secrets(all_merge_requests, all_mr_comments, all_projects, args):
+    if args.mergerequests:
+        info("[*] Sniffing for secrets in merge requests and merge request comments")
+        all_secrets = []
+        for mr in all_merge_requests:
+            secrets = merge_requests.sniff_secrets(mr)
+            for secret in secrets:
+                all_secrets.append(secret)
+        for comment in all_mr_comments:
+            secrets = merge_request_comments.sniff_secrets(comment)
+            for secret in secrets:
+                all_secrets.append(secret)
+        log_related_mrs_comments(all_merge_requests, all_mr_comments, all_projects)
+        log_mrs_comments_secrets(all_secrets, all_merge_requests, all_mr_comments)
+
+
+def get_issues_comments_secrets(all_issues, all_issue_comments, all_projects, args):
     if args.issues:
-        info("[*] Sniffing for secrets in issues and comments")
+        info("[*] Sniffing for secrets in issues and issue comments")
         all_secrets = []
         for issue in all_issues:
             secrets = issues.sniff_secrets(issue)
             for secret in secrets:
                 all_secrets.append(secret)
-        for comment in all_comments:
+        for comment in all_issue_comments:
             secrets = issue_comments.sniff_secrets(comment)
             for secret in secrets:
                 all_secrets.append(secret)
-        log_related_issues_comments(all_issues, all_comments, all_projects)
-        log_issue_comment_secrets(all_secrets, all_issues, all_comments)
+        log_related_issues_comments(all_issues, all_issue_comments, all_projects)
+        log_issue_comment_secrets(all_secrets, all_issues, all_issue_comments)
 
 
 def get_snippet_secrets(all_snippets, all_projects, args):
@@ -79,6 +113,16 @@ def get_snippet_secrets(all_snippets, all_projects, args):
             all_secrets.append(s)
         log_related_snippets(all_snippets, all_projects)
         log_snippet_secrets(all_secrets, all_snippets)
+
+
+def log_related_mrs_comments(all_merge_requests, all_mr_comments, all_projects):
+    info("  FOUND %s MERGE REQUESTS AND %s COMMENTS ACROSS %s PROJECTS", len(all_merge_requests), len(all_mr_comments), len(all_projects))
+
+
+def log_mrs_comments_secrets(secrets, all_issues, all_comments):
+    info("   FOUND %s SECRETS IN %s TOTAL MERGE REQUESTS & COMMENTS", len(secrets), len(all_issues) + len(all_comments))
+    for secret in sorted(secrets, key=lambda i: (len(i.url), i.url)):
+        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, secret.secret)
 
 
 def log_issue_comment_secrets(secrets, all_issues, all_comments):

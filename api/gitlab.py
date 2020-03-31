@@ -42,6 +42,12 @@ class GitLab:
         self.visited_urls = {}
         self.next_page_regex = re.compile(r'<([^<>]*?)>; rel="next"')
 
+    def get_merge_request_comments(self, project_id, mr_id):
+        return self.get('{}/projects/{}/merge_requests/{}/discussions'.format(self.base_url, project_id, mr_id))
+
+    def get_merge_requests(self, project_id):
+        return self.get('{}/projects/{}/merge_requests'.format(self.base_url, project_id))
+
     def get_issue_comments(self, project_id, issue_id):
         return self.get('{}/projects/{}/issues/{}/discussions'.format(self.base_url, project_id, issue_id))
 
@@ -110,7 +116,3 @@ class GitLab:
                 warning("[!] Error (%s) processing pagination URL: %s", response.status_code, next_url)
         # Return the collective results
         return all_results
-
-
-
-
