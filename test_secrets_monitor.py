@@ -64,21 +64,21 @@ def test_finds_gitlab_pat_in_text_block():
 
                     private static string GetKey(object instance, string caller)
                     {
-                        return "private-token=asdfkdjfkjalksjdflkj"
+                        return "private-token=asdfkDjfkjalkSjdflkj"
                     }
                 }
             }
         """)}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
-    assert actual[0].secret == 'private-token=asdfkdjfkjalksjdflkj"'
+    assert actual[0].secret == 'private-token=asdfkDjfkjalkSjdflkj"'
     assert actual[0].url == test_url
     assert actual[0].secret_type == "GitLab PAT API-style"
 
 
 def test_finds_naked_slack_token():
     target = types.SecretsMonitor()
-    naked_token = "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
+    naked_token = "Xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
     content = {test_url: naked_token}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
@@ -91,7 +91,7 @@ def test_finds_single_group_results():
     target = types.SecretsMonitor()
     content = {test_url: textwrap.dedent("""\
             -----BEGIN RSA PRIVATE KEY-----
-            asdfjwpoidnsohfohoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
+            asdfjwpoidnsohfoHoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
             -----END RSA PRIVATE KEY-----
         """)}
     assert len(target.sniff_secrets(content)) == 1
@@ -101,7 +101,7 @@ def test_finds_openssh_private_key():
     target = types.SecretsMonitor()
     content = {test_url: textwrap.dedent("""\
                     -----BEGIN OPENSSH PRIVATE KEY-----
-                    asdfjwpoidnsohfohoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
+                    asdfjwpoidnsohfoHoiahsdfkjaksfdkasdfsdkfjlhkjhslkdjhdfjh
                     -----END OPENSSH PRIVATE KEY-----"
                 """)}
     assert len(target.sniff_secrets(content)) == 1
