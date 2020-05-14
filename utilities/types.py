@@ -94,7 +94,7 @@ class SecretsMonitor:
             regex = regexes[name]
             parts.append(f'(?P<{group}>{regex})')
 
-        return re.compile('|'.join(parts))
+        return re.compile('|'.join(parts), re.IGNORECASE)
 
     def __group(self, i):
         return f'group_{i}'

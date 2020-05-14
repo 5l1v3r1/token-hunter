@@ -19,11 +19,11 @@ def test_handles_nil():
 def test_finds_simple_json_gitlab_pat():
     target = types.SecretsMonitor()
 
-    content = {test_url: "private-token:ab123mr980pas453201s"}
+    content = {test_url: "private-token:AB123mr980pas453201s"}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
     assert actual[0].url == test_url
-    assert actual[0].secret == "private-token:ab123mr980pas453201s"
+    assert actual[0].secret == "private-token:AB123mr980pas453201s"
     assert actual[0].secret_type == "GitLab PAT API-style"
 
 
@@ -38,30 +38,30 @@ def test_finds_gitlab_pat_in_text_block():
     content = {test_url: textwrap.dedent("""\
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
-            
+
             namespace NameSpace1
             {
                 public static class DoubleExecutionPreventerExtensions
                 {
                     private static readonly List<string> locks = new List<string>();
-            
+
                     public static void Free(this object obj, [CallerMemberName] string caller = null)
                     {
                         string key = GetKey(obj, caller);
                         locks.Remove(key);
                     }
-            
+
                     public static bool Lock(this object obj, [CallerMemberName] string caller = null)
                     {
                         string key = GetKey(obj, caller);
-            
+
                         if (locks.Contains(key))
                             return true;
-            
+
                         locks.Add(key);
                         return false;
                     }
-            
+
                     private static string GetKey(object instance, string caller)
                     {
                         return "private-token=asdfkdjfkjalksjdflkj"
