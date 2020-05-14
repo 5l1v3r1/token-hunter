@@ -1,7 +1,8 @@
+from collections import namedtuple
+import argparse
 import json
 import os
 import re
-import argparse
 import sys
 
 from utilities import constants
@@ -65,25 +66,9 @@ class Arguments:
         return getattr(self.instance.parsed_args, name)
 
 
-class Issue:
-    def __init__(self, ident, web_url, description):
-        self.ident = ident
-        self.web_url = web_url
-        self.description = description
-
-
-class Comment:
-    def __init__(self, comment_type, parent_url, comment_body):
-        self.comment_type = comment_type
-        self.comment_body = comment_body
-        self.parent_url = parent_url
-
-
-class Secret:
-    def __init__(self, secret_type, secret, url):
-        self.secret_type = secret_type
-        self.url = url
-        self.secret = secret
+Issue = namedtuple('Issue', 'ident web_url description')
+Comment = namedtuple('Comment', 'comment_type parent_url comment_body')
+Secret = namedtuple('Secret', 'secret_type secret url')
 
 
 class SecretsMonitor:
