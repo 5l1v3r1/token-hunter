@@ -89,26 +89,35 @@ class Secret:
 class SecretsMonitor:
 
     def __init__(self):
-        self.merged_regexes_string = ''
-        self.regexp_name_mapping = {}
-        with open(os.path.join(os.path.dirname(__file__), "../regexes.json"), 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), "../regexes.json")) as f:
             self.regexes = json.loads(f.read())
-        regexp_number = 0
-        total_regexps = len(self.regexes)
-        for key in self.regexes:
-            regexp_number += 1
-            regexp_group_name = "group_%s" % regexp_number
-            self.regexp_name_mapping[regexp_group_name] = key
-            self.merged_regexes_string += '(?P<{key}>{regexp})'.format(key=regexp_group_name,
-                                                                       regexp=self.regexes[key])
-            self.regexes[key] = re.compile(self.regexes[key])
-            if regexp_number < total_regexps:
-                self.merged_regexes_string += '|'
-        self.merged_regexes_compile = re.compile(self.merged_regexes_string)
+
+        self.regex_names = self.__regex_names(self.regexes)
+        self.master_regex = self.__compile_regexes(self.regexes)
+
+    def __regex_names(self, regexes):
+        """ Returns a dict containing regex names keyed by group
+        """
+        return {self.__group(i): name for i, name in enumerate(regexes)}
+
+    def __compile_regexes(self, regexes):
+        """ Concatenates all regexes into one big, compiled regex.
+        """
+        parts = []
+        for i, name in enumerate(regexes):
+            group = self.__group(i)
+            regex = regexes[name]
+            parts.append(f'(?P<{group}>{regex})')
+
+        return re.compile('|'.join(parts))
+
+    def __group(self, i):
+        return f'group_{i}'
 
     def sniff_secrets(self, content):
-        if len(content) == 0:
+        if not content:
             return []
+
         secrets = []
         for web_url, raw_data in content.items():
             found_secrets = self.__get_secrets(raw_data)
@@ -120,12 +129,12 @@ class SecretsMonitor:
         result = {}
         if not content:
             return result
-        match = self.merged_regexes_compile.search(content)
+        match = self.master_regex.search(content)
         if not match:
             return result
         for group, value in match.groupdict().items():
             if value is None:
                 continue
-            mapped_name = self.regexp_name_mapping[group]
-            result.update({mapped_name: value})
+            name = self.regex_names[group]
+            result[name] = value
         return result
