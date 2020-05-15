@@ -30,7 +30,6 @@ def test_finds_simple_json_gitlab_pat():
 def test_regexes_are_loaded():
     target = types.SecretsMonitor()
     assert len(target.regexes) > 0
-    assert target.regexes["GitLab PAT API-style"] is not None
 
 
 def test_finds_gitlab_pat_in_text_block():
