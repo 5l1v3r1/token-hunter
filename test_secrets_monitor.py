@@ -23,8 +23,8 @@ def test_finds_simple_json_gitlab_pat():
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
     assert actual[0].url == test_url
-    assert actual[0].secret == "private-token:AB123mr980pas453201s"
-    assert actual[0].secret_type == "GitLab PAT API-style"
+    assert actual[0].secret == "-token:AB123mr980pas453201s"
+    assert actual[0].secret_type == "GitLab PAT"
 
 
 def test_regexes_are_loaded():
@@ -64,21 +64,21 @@ def test_finds_gitlab_pat_in_text_block():
 
                     private static string GetKey(object instance, string caller)
                     {
-                        return "private-token=asdfkDjfkjalkSjdflkj"
+                        return gitlabtoken="asdfkDjfkjalkSjdflkj"
                     }
                 }
             }
         """)}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
-    assert actual[0].secret == 'private-token=asdfkDjfkjalkSjdflkj"'
+    assert actual[0].secret == 'token="asdfkDjfkjalkSjdflkj"'
     assert actual[0].url == test_url
-    assert actual[0].secret_type == "GitLab PAT API-style"
+    assert actual[0].secret_type == "GitLab PAT"
 
 
 def test_finds_naked_slack_token():
     target = types.SecretsMonitor()
-    naked_token = "Xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
+    naked_token = "xoxp-912111665212-112233445566-112233445566-111111111111111111111111111111a1"
     content = {test_url: naked_token}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
