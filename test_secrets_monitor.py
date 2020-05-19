@@ -19,11 +19,11 @@ def test_handles_nil():
 def test_finds_simple_json_gitlab_pat():
     target = types.SecretsMonitor()
 
-    content = {test_url: "private-token:AB123mr980pas453201s"}
+    content = {test_url: "private-token:AB123mr980pas453201s\r\n"}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
     assert actual[0].url == test_url
-    assert actual[0].secret == "-token:AB123mr980pas453201s"
+    assert actual[0].secret == "-token:AB123mr980pas453201s\r"
     assert actual[0].secret_type == "GitLab PAT"
 
 
@@ -43,10 +43,43 @@ def test_does_not_match_gitlab_pats_without_line_ending():
 
 def test_finds_gitlab_pat_in_text_block():
     target = types.SecretsMonitor()
-    content = {test_url: "return gitlabtoken=\"asdfkDjfkjalkSjdflkj\""}
+    content = {test_url: textwrap.dedent("""\
+                using System.Collections.Generic;
+                using System.Runtime.CompilerServices;
+
+                namespace NameSpace1
+                {
+                    public static class DoubleExecutionPreventerExtensions
+                    {
+                        private static readonly List<string> locks = new List<string>();
+
+                        public static void Free(this object obj, [CallerMemberName] string caller = null)
+                        {
+                            string key = GetKey(obj, caller);
+                            locks.Remove(key);
+                        }
+
+                        public static bool Lock(this object obj, [CallerMemberName] string caller = null)
+                        {
+                            string key = GetKey(obj, caller);
+
+                            if (locks.Contains(key))
+                                return true;
+
+                            locks.Add(key);
+                            return false;
+                        }
+
+                        private static string GetKey(object instance, string caller)
+                        {
+                            return "private-token=asdfkDjfkjalkSjdflkj"
+                        }
+                    }
+                }
+            """)}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
-    assert actual[0].secret == 'token="asdfkDjfkjalkSjdflkj"'
+    assert actual[0].secret == '-token=asdfkDjfkjalkSjdflkj"'
     assert actual[0].url == test_url
     assert actual[0].secret_type == "GitLab PAT"
 
@@ -84,5 +117,22 @@ def test_finds_openssh_private_key():
 
 def test_finds_gitlab_ci_registration_token():
     target = types.SecretsMonitor()
-    content = {test_url: "token: guz_DJCzb4rsUybpwuAQ"}
+    content = {test_url: textwrap.dedent("""\
+    runners:
+    - name: ***computer name***
+      limit: 0
+      outputlimit: 0
+      requestconcurrency: 0
+      runnercredentials:
+        url: https://gitlab.com/
+        token: guz_DJCzb4rsUybpwuAQ
+        tlscafile: ""
+        tlscertfile: ""
+        tlskeyfile: ""
+      runnersettings:
+        executor: docker
+        buildsdir: ""
+        cachedir: ""
+    """)}
     assert len(target.sniff_secrets(content)) == 1
+
