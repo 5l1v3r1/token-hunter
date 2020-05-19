@@ -23,7 +23,7 @@ def test_finds_simple_json_gitlab_pat():
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
     assert actual[0].url == test_url
-    assert actual[0].secret == "-token:AB123mr980pas453201s\r"
+    assert actual[0].secret == "-token:AB123mr980pas453201s\r\n"
     assert actual[0].secret_type == "GitLab PAT"
 
 
@@ -39,6 +39,20 @@ def test_does_not_match_gitlab_pats_without_line_ending():
     """)}
     actual = target.sniff_secrets(content)
     assert len(actual) == 0
+
+
+def test_finds_gitlab_pat_in_naked_string():
+    target = types.SecretsMonitor()
+    content = {test_url: "private-token: QMZd94Sz-MAVNfaoP7Vz"}
+    actual = target.sniff_secrets(content)
+    assert len(actual) == 1
+
+
+def test_finds_gitlab_pat_surrounded_by_double_quotes():
+    target = types.SecretsMonitor()
+    content = {test_url: "PRIVATE_TOKEN= \"QMZd94Sz-MAVNfaoP7Vz\""}
+    actual = target.sniff_secrets(content)
+    assert len(actual) == 1
 
 
 def test_finds_gitlab_pat_in_text_block():
@@ -79,7 +93,7 @@ def test_finds_gitlab_pat_in_text_block():
             """)}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
-    assert actual[0].secret == '-token=asdfkDjfkjalkSjdflkj"'
+    assert actual[0].secret == '-token=asdfkDjfkjalkSjdflkj"\n'
     assert actual[0].url == test_url
     assert actual[0].secret_type == "GitLab PAT"
 

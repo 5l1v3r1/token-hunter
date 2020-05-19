@@ -1,5 +1,5 @@
 {
-  "GitLab PAT": "(_|-?)([t|T][o|O][k|K][e|E][n|N])(:|=| )(.?)(\\S{20})(.?)(?=\\n|\\r|\\r\\n)",
+  "GitLab PAT": "(_|-?)([t|T][o|O][k|K][e|E][n|N])(:|=| )(.{0,3})(\\S{20})(.?)(\\n|\\r|\\n\\r|$)",
   "Slack Token": "(xox[p|b|o|a]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
   "SSH Key": "(-*)BEGIN [\\s\\S]{2,} PRIVATE KEY(-*)",
   "Amazon AWS Access Key ID": "AKIA[0-9A-Z]{16}",
