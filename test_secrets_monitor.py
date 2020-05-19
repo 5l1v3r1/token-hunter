@@ -32,42 +32,18 @@ def test_regexes_are_loaded():
     assert len(target.regexes) > 0
 
 
+def test_does_not_match_gitlab_pats_without_line_ending():
+    target = types.SecretsMonitor()
+    content = {test_url: textwrap.dedent("""
+        [GitLab Personal Access Token Example](https://gitlab.com/gitlab-com/gl-security/gl-redteam/red-team-tech-notes/snippets/1976052)
+    """)}
+    actual = target.sniff_secrets(content)
+    assert len(actual) == 0
+
+
 def test_finds_gitlab_pat_in_text_block():
     target = types.SecretsMonitor()
-    content = {test_url: textwrap.dedent("""\
-            using System.Collections.Generic;
-            using System.Runtime.CompilerServices;
-
-            namespace NameSpace1
-            {
-                public static class DoubleExecutionPreventerExtensions
-                {
-                    private static readonly List<string> locks = new List<string>();
-
-                    public static void Free(this object obj, [CallerMemberName] string caller = null)
-                    {
-                        string key = GetKey(obj, caller);
-                        locks.Remove(key);
-                    }
-
-                    public static bool Lock(this object obj, [CallerMemberName] string caller = null)
-                    {
-                        string key = GetKey(obj, caller);
-
-                        if (locks.Contains(key))
-                            return true;
-
-                        locks.Add(key);
-                        return false;
-                    }
-
-                    private static string GetKey(object instance, string caller)
-                    {
-                        return gitlabtoken="asdfkDjfkjalkSjdflkj"
-                    }
-                }
-            }
-        """)}
+    content = {test_url: "return gitlabtoken=\"asdfkDjfkjalkSjdflkj\""}
     actual = target.sniff_secrets(content)
     assert len(actual) == 1
     assert actual[0].secret == 'token="asdfkDjfkjalkSjdflkj"'
@@ -108,21 +84,5 @@ def test_finds_openssh_private_key():
 
 def test_finds_gitlab_ci_registration_token():
     target = types.SecretsMonitor()
-    content = {test_url: textwrap.dedent("""\
-    runners:
-    - name: ***computer name***
-      limit: 0
-      outputlimit: 0
-      requestconcurrency: 0
-      runnercredentials:
-        url: https://gitlab.com/
-        token: guz_DJCzb4rsUybpwuAQ
-        tlscafile: ""
-        tlscertfile: ""
-        tlskeyfile: ""
-      runnersettings:
-        executor: docker
-        buildsdir: ""
-        cachedir: ""
-    """)}
+    content = {test_url: "token: guz_DJCzb4rsUybpwuAQ"}
     assert len(target.sniff_secrets(content)) == 1
