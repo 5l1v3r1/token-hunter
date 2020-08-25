@@ -4,7 +4,14 @@ Collect OSINT for [GitLab groups](https://docs.gitlab.com/ee/user/group/) and [m
 
 # How the tool works
 
-Start by providing a group ID for a specific group on GitLab.  You can find the group ID underneath the group name in the GitLab UI.  Token-Hunter will use the GitLab group ID to find all associated projects for that group and, optionally, the groups members personal projects.  Configure the tool to look for sensitive data in assets related to the projects it finds.  Token-Hunter uses the [same set of regular expressions as TruffleHog](https://github.com/dxa4481/truffleHogRegexes) with a few additions for GitLab specific tokens.  Token-Hunter depends on these [easily configurable regular expressions](https://gitlab.com/gitlab-com/gl-security/gl-redteam/token-hunter/blob/master/regexes.json) for accuracy and effectiveness.  Currently, the tool supports GitLab snippets, issues, and issue discussions with plans for future expansion to other assets.  The tool is intended to be very configurable to allow for efficient discovery of sensitive data in the assets you're specifically interested in.
+Start by providing a group ID for a specific group on GitLab.  You can find the group ID underneath the group name in the GitLab UI.  Token-Hunter will use the GitLab group ID to find all associated projects for that group and, optionally, the groups members personal projects.  Configure the tool to look for sensitive data in assets related to the projects it finds.  Token-Hunter a [similar set of regular expressions as TruffleHog](https://github.com/dxa4481/truffleHogRegexes) with a few additions for GitLab specific tokens.  Token-Hunter depends on its own set of [easily configurable regular expressions](https://gitlab.com/gitlab-com/gl-security/gl-redteam/token-hunter/blob/master/regexes.json) for accuracy and effectiveness.  The tool is intended to be very configurable to allow for efficient discovery of sensitive data in the assets you're specifically interested in.
+
+# GitLab Assets Supported
+
+* [CI Job Logs](https://docs.gitlab.com/ee/ci/pipelines/)
+* [Snippets](https://docs.gitlab.com/ee/user/snippets.html)
+* [Issues](https://docs.gitlab.com/ee/user/project/issues/) and [issue discussions](https://docs.gitlab.com/ee/api/discussions.html#discussions-api)
+* [Merge requests](https://docs.gitlab.com/ee/user/project/merge_requests/) and merge request discussions
 
 # Usage
 
@@ -24,26 +31,27 @@ pip3 install -r ./requirements.txt
 Then, you can run the tool and specify your options as follows:
 
 ```
-usage: token-hunter.py [-h] -g GROUP [-u URL] [-m] [-s] [-i] [-r] [-t]
+usage: token-hunter.py [-h] -g GROUP [-u URL] [-m] [-s] [-i] [-r] [-j] [-t]
                        [-p PROXY] [-c CERT] [-l LOGFILE]
 
-Collect OSINT for GitLab groups and members. Optionally search the group and
-group members snippets, project issues, and issue discussions/comments for
-sensitive data.
+Collect OSINT for GitLab groups and, optionally, members. Search repository
+assets for sensitive data.
 
 optional arguments:
   -h, --help            show this help message and exit
   -u URL, --url URL     An optional argument to specify the base URL of your
                         GitLab instance. If the argument is not supplied, its
                         defaulted to 'https://gitlab.com'
-  -m, --members         Include group members personal projects and their
-                        related assets in the searchfor sensitive data.
+  -m, --members         Include group members and their personal projects and
+                        their related assets in the search for sensitive data.
   -s, --snippets        Searches found projects for GitLab Snippets with
                         sensitive data.
   -i, --issues          Searches found projects for GitLab Issues and
                         discussions/comments with sensitive data.
   -r, --mergerequests   Searches found projects for GitLab Merge Requests and
                         discussions/comments with sensitive data.
+  -j, --jobs            Searches each projects public CI job logs for
+                        sensitive data.
   -t, --timestamp       Disables display of start/finish times and originating
                         IP to the output
   -p PROXY, --proxy PROXY
@@ -60,8 +68,7 @@ optional arguments:
 required arguments:
   -g GROUP, --group GROUP
                         ID or HTML encoded name of a GitLab group. This
-                        option, by itself, will display group projects and
-                        member names only.
+                        option, by itself, will display group projects only.
 ```
 
 # Usage Examples
@@ -78,9 +85,9 @@ Finds all projects for group 123456 as well as all of the personal projects for 
 
 Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells Token-Hunter to search GitLab snippets associated with each found project for sensitive data.
 
-`./token-hunter.py -g 123456 -msir`
+`./token-hunter.py -g 123456 -msirj`
 
-Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells Token-Hunter to search GitLab snippets associated with each found project for sensitive data.  The `-i` switch tells Token-Hunter to also search issues and discussions  for each of the found projects for sensitive data.  The `-r` switch tells Token-Hunter to also search merge requests and merge request discussions for each of the found projects.  **CAUTION:** This configuration has the potential to pull a lot of data!
+Finds all projects for group 123456 as well as all of the personal projects for the group members.  The `-s` switch tells Token-Hunter to search GitLab snippets associated with each found project for sensitive data.  The `-i` switch tells Token-Hunter to also search issues and discussions for each of the found projects for sensitive data.  The `-r` switch tells Token-Hunter to also search merge requests and merge request discussions for each of the found projects.  The `-j` switch tells Token-Hunter to also search CI job logs for each project found.  **CAUTION:** This configuration has the potential to pull a lot of data!
 
 `./token-hunter.py -g 123456 -msit -u https://mygitlab-instance.com -p http://127.0.01:8080 -c /Users/hacker/owasp_zap_ca_cert.cer -l ./appended-output.txt`
 
