@@ -11,7 +11,7 @@ def get_all(project_id, project_url):
     if validate.api_result(details):
         info("[*] Found %s merge requests for project %s", len(details), project_url)
         for item in details:
-            merge_requests.append(types.Issue(item['iid'], item['web_url'], item['title']))
+            merge_requests.append(types.MergeRequest(item['iid'], item['web_url'], item['title']))
     return merge_requests
 
 
