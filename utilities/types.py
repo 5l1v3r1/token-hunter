@@ -33,6 +33,8 @@ class Arguments:
             parser.add_argument('-r', '--mergerequests', action='store_true',
                                 help="Searches found projects for GitLab Merge Requests and discussions/comments with "
                                      "sensitive data.")
+            parser.add_argument('-j', '--jobs', action='store_true',
+                                help="Searches each projects public CI job logs for sensitive data.")
             parser.add_argument('-t', '--timestamp', action='store_true',
                                 help='Disables display of start/finish times and originating IP to the output')
             parser.add_argument('-p', '--proxy', type=str, action='store',
