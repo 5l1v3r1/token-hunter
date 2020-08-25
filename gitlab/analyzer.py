@@ -1,5 +1,5 @@
 from logging import info, warning
-from utilities import types
+from utilities import types, log
 from gitlab import \
     projects, snippets, groups, \
     issues, members, issue_comments, \
@@ -145,25 +145,25 @@ def log_related_mrs_comments(all_merge_requests, all_mr_comments, all_projects):
 def log_mrs_comments_secrets(secrets, all_issues, all_comments):
     info("   FOUND %s SECRETS IN %s TOTAL MERGE REQUESTS & COMMENTS", len(secrets), len(all_issues) + len(all_comments))
     for secret in sorted(secrets, key=lambda i: (len(i.url), i.url)):
-        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, log.truncate(secret.secret))
 
 
 def log_issue_comment_secrets(secrets, all_issues, all_comments):
     info("   FOUND %s SECRETS IN %s TOTAL ISSUES & COMMENTS", len(secrets), len(all_issues) + len(all_comments))
     for secret in sorted(secrets, key=lambda i: (len(i.url), i.url)):
-        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, log.truncate(secret.secret))
 
 
 def log_snippet_secrets(all_secrets, all_snippets):
     info("   FOUND %s SECRETS IN %s TOTAL SNIPPETS", len(all_secrets), len(all_snippets))
     for secret in sorted(all_secrets, key=lambda i: (len(i.url), i.url)):
-        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, log.truncate(secret.secret))
 
 
 def log_job_secrets(all_secrets, all_jobs):
     info("   FOUND %s SECRETS IN %s TOTAL JOBS", len(all_secrets), len(all_jobs))
     for secret in sorted(all_secrets, key=lambda i: (len(i.url), i.url)):
-        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, secret.secret)
+        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, log.truncate(secret.secret))
 
 
 def log_related_issues_comments(all_issues, all_comments, all_projects):
