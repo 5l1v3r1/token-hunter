@@ -68,6 +68,7 @@ class Arguments:
         return getattr(self.instance.parsed_args, name)
 
 
+JobLog = namedtuple('JobLog', 'ident web_url trace')
 Issue = namedtuple('Issue', 'ident web_url description')
 Comment = namedtuple('Comment', 'comment_type parent_url comment_body')
 Secret = namedtuple('Secret', 'secret_type secret url')

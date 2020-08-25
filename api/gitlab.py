@@ -45,6 +45,12 @@ class GitLab:
     def get_merge_request_comments(self, project_id, mr_id):
         return self.get('{}/projects/{}/merge_requests/{}/discussions'.format(self.base_url, project_id, mr_id))
 
+    def get_jobs(self, project_id):
+        return self.get('{}/projects/{}/jobs?scope=success&scope=failed'.format(self.base_url, project_id))
+
+    def get_job_logs(self, project_id, job_id):
+        return self.get('{}/projects/{}/jobs/{}/trace'.format(self.base_url, project_id, job_id))
+
     def get_merge_requests(self, project_id):
         return self.get('{}/projects/{}/merge_requests'.format(self.base_url, project_id))
 
