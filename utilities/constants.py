@@ -24,6 +24,12 @@ class Requests:
         return 4
 
 
+class Strings:
+    @staticmethod
+    def max_string_length():
+        return 75
+
+
 class Banner:
     @staticmethod
     def render():
