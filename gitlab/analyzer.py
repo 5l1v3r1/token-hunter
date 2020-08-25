@@ -3,7 +3,8 @@ from utilities import types
 from gitlab import \
     projects, snippets, groups, \
     issues, members, issue_comments, \
-    merge_requests, merge_request_comments
+    merge_requests, merge_request_comments, \
+    job_logs
 
 
 def analyze():
@@ -11,6 +12,7 @@ def analyze():
     all_issue_comments = []
     all_merge_requests = []
     all_mr_comments = []
+    all_job_logs = []
     personal_projects = {}
     all_snippets = {}
     args = types.Arguments()
@@ -66,6 +68,14 @@ def analyze():
                     comments = merge_request_comments.get_all(project_id, mr.ident, mr.web_url)
                     for comment in comments:
                         all_mr_comments.append(comment)
+
+        if args.jobs:
+            info("[*] Fetching CI job logs for %s projects", len(all_projects))
+            for project_id, project_url in all_projects.items():
+                project_job_logs = job_logs.get_all(project_id, project_url)
+                if len(project_job_logs) > 0:
+                    for log in project_job_logs:
+                        all_job_logs.append(log)
 
         get_snippet_secrets(all_snippets, all_projects, args)
         get_issues_comments_secrets(all_issues, all_issue_comments, all_projects, args)
