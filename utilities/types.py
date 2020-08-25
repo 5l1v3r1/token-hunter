@@ -12,19 +12,18 @@ class Arguments:
     class __Arguments:
         def __init__(self):
             parser = argparse.ArgumentParser(
-                description="Collect OSINT for GitLab groups and members.  Optionally search the "
-                            "group and group members snippets, project issues, and issue discussions/comments for "
+                description="Collect OSINT for GitLab groups and, optionally, members.  Search repository assets for "
                             "sensitive data.")
             required_named = parser.add_argument_group('required arguments')
             required_named.add_argument('-g', '--group', type=str, action='append', required=True,
                                         help="ID or HTML encoded name of a GitLab group.  This option, by itself, "
-                                             "will display group projects and member names only.")
+                                             "will display group projects only.")
             parser.add_argument('-u', '--url', default='https://gitlab.com',
                                 help="An optional argument to specify the base URL of your GitLab instance.  If the "
                                      "argument is not supplied, its defaulted to 'https://gitlab.com'")
             parser.add_argument('-m', '--members', action='store_true',
-                                help="Include group members personal projects and their related assets in the search"
-                                     "for sensitive data.")
+                                help="Include group members and their personal projects and their related assets in the "
+                                     "search for sensitive data.")
             parser.add_argument('-s', '--snippets', action='store_true',
                                 help="Searches found projects for GitLab Snippets with sensitive data.")
             parser.add_argument('-i', '--issues', action='store_true',
