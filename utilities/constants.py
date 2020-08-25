@@ -39,5 +39,5 @@ class Banner:
         print("    | |  \      /| |\ \ | {__ | |\  || { } || {_} || |\  |  | |  | {__ | .-. |")
         print("    `-'   `----' `-' `-'`----'`-' `-'`-' `-'`-----'`-' `-'  `-'  `----'`-' `-'")
         print("")
-        print("  By GitLab Red Team (https://gitlab.com/gitlab-com/gl-security/gl-redteam)")
+        print("  By GitLab Red Team (https://gitlab.com/gitlab-com/gl-security/security-operations/gl-redteam)")
         print("")
