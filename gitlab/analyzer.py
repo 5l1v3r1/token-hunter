@@ -80,6 +80,19 @@ def analyze():
         get_snippet_secrets(all_snippets, all_projects, args)
         get_issues_comments_secrets(all_issues, all_issue_comments, all_projects, args)
         get_merge_reqs_comments_secrets(all_merge_requests, all_mr_comments, all_projects, args)
+        get_job_log_secrets(all_job_logs, all_projects, args)
+
+
+def get_job_log_secrets(all_job_logs, all_projects, args):
+    if args.jobs:
+        info("[*] Sniffing for secrets in job logs")
+        all_secrets = []
+        for log in all_job_logs:
+            secrets = job_logs.sniff_secrets(log)
+            for secret in secrets:
+                all_secrets.append(secret)
+        log_related_jobs(all_job_logs, all_projects)
+        log_job_secrets(all_secrets, all_job_logs)
 
 
 def get_merge_reqs_comments_secrets(all_merge_requests, all_mr_comments, all_projects, args):
@@ -147,12 +160,22 @@ def log_snippet_secrets(all_secrets, all_snippets):
         info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, secret.secret)
 
 
+def log_job_secrets(all_secrets, all_jobs):
+    info("   FOUND %s SECRETS IN %s TOTAL JOBS", len(all_secrets), len(all_jobs))
+    for secret in sorted(all_secrets, key=lambda i: (len(i.url), i.url)):
+        info("      Url: %s, Type: %s, Secret: %s", secret.url, secret.secret_type, secret.secret)
+
+
 def log_related_issues_comments(all_issues, all_comments, all_projects):
     info("  FOUND %s ISSUES AND %s COMMENTS ACROSS %s PROJECTS", len(all_issues), len(all_comments), len(all_projects))
 
 
 def log_related_snippets(all_snippets, all_projects):
     info("  FOUND %s SNIPPETS ACROSS %s TOTAL PROJECTS", len(all_snippets), len(all_projects))
+
+
+def log_related_jobs(all_job_logs, all_projects):
+    info("  FOUND %s JOB LOGS ACROSS %s TOTAL PROJECTS", len(all_job_logs), len(all_projects))
 
 
 def log_group(group_details):

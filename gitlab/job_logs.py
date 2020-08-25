@@ -14,3 +14,9 @@ def get_all(project_id, project_url):
             job_log = gitlab.get_job_logs(project_id, job['id'])
             job_logs.append(types.JobLog(job['id'], job['web_url'], job_log))
     return job_logs
+
+
+def sniff_secrets(job_log):
+    monitor = types.SecretsMonitor()
+    return monitor.sniff_secrets({job_log.web_url: job_log.trace})
+
