@@ -24,9 +24,9 @@ def analyze():
             continue
 
         group_projects = projects.all_group_projects(group)
-        all_members = members.get_all(group)
 
         if args.members:
+            all_members = members.get_all(group)
             for member in all_members:
                 personal_projects.update(projects.all_member_projects(member))
 
