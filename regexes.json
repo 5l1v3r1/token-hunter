@@ -1,5 +1,6 @@
 {
 	"Amazon AWS Access Key ID": "AKIA[0-9A-Z]{16}",
+    "Amazon AWS Secret Access Key": "[\\s][a-zA-Z0-9]{40}[\\s]",
 	"Amazon MWS Auth Token": "amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
 	"Facebook Access Token": "EAACEdEose0cBA[0-9A-Za-z]+",
 	"Facebook OAuth": "[f|F][a|A][c|C][e|E][b|B][o|O][o|O][k|K].*['|\"][0-9a-f]{32}['|\"]",
