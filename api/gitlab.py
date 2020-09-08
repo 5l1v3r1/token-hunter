@@ -42,6 +42,9 @@ class GitLab:
         self.visited_urls = {}
         self.next_page_regex = re.compile(r'<([^<>]*?)>; rel="next"')
 
+    def get_project_details(self, project):
+        return self.get('{}/projects/{}'.format(self.base_url, project))
+
     def get_merge_request_comments(self, project_id, mr_id):
         return self.get('{}/projects/{}/merge_requests/{}/discussions'.format(self.base_url, project_id, mr_id))
 

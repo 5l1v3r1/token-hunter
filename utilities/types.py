@@ -14,10 +14,13 @@ class Arguments:
             parser = argparse.ArgumentParser(
                 description="Collect OSINT for GitLab groups and, optionally, members.  Search repository assets for "
                             "sensitive data.")
-            required_named = parser.add_argument_group('required arguments')
-            required_named.add_argument('-g', '--group', type=str, action='append', required=True,
+            required_args = parser.add_mutually_exclusive_group(required=True)
+            required_args.add_argument('-g', '--group', type=str, action='append',
                                         help="ID or HTML encoded name of a GitLab group.  This option, by itself, "
                                              "will display group projects only.")
+            required_args.add_argument('-p', '--project', type=str, action='append',
+                                        help="ID or HTML encoded name of a GitLab project.  This option, by itself, "
+                                             "will display project members only.")
             parser.add_argument('-u', '--url', default='https://gitlab.com',
                                 help="An optional argument to specify the base URL of your GitLab instance.  If the "
                                      "argument is not supplied, its defaulted to 'https://gitlab.com'")
