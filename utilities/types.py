@@ -20,7 +20,7 @@ class Arguments:
                                              "will display group projects only.")
             required_args.add_argument('-p', '--project', type=str, action='append',
                                         help="ID or HTML encoded name of a GitLab project.  This option, by itself, "
-                                             "will display project members only.")
+                                             "will display project details only.")
             parser.add_argument('-u', '--url', default='https://gitlab.com',
                                 help="An optional argument to specify the base URL of your GitLab instance.  If the "
                                      "argument is not supplied, its defaulted to 'https://gitlab.com'")
