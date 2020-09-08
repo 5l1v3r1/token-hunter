@@ -52,8 +52,9 @@ def analyze():
 
         all_projects = {**group_projects, **personal_projects, **target_projects}
 
-        log_group(group_details)
-        log_group_projects(group_projects)
+        if args.group:
+            log_group(group_details)
+            log_group_projects(group_projects)
 
         if args.members:
             log_members(all_members)
