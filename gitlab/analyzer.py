@@ -45,6 +45,8 @@ def analyze():
         if args.members:
             if args.group:
                 all_members = members.get_all_group_members(item)
+            else:
+                all_members = members.get_all_project_members(item)
             for member in all_members:
                 personal_projects.update(projects.all_member_projects(member))
 
