@@ -78,7 +78,7 @@ class GitLab:
     def get_group(self, group):
         return self.get('{}/groups/{}'.format(self.base_url, group))
 
-    def get_members(self, group):
+    def get_group_members(self, group):
         return self.get('{}/groups/{}/members'.format(self.base_url, group))
 
     def get_current_user(self):

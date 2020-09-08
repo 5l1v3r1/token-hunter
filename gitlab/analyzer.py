@@ -13,6 +13,7 @@ def analyze():
     all_merge_requests = []
     all_mr_comments = []
     all_job_logs = []
+    all_members = []
     target_projects = {}
     group_projects = {}
     group_details = {}
@@ -42,7 +43,8 @@ def analyze():
             target_projects.update(project_details)
 
         if args.members:
-            all_members = members.get_all(item)
+            if args.group:
+                all_members = members.get_all_group_members(item)
             for member in all_members:
                 personal_projects.update(projects.all_member_projects(member))
 
