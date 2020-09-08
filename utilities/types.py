@@ -36,7 +36,7 @@ class Arguments:
                                 help="Searches each projects public CI job logs for sensitive data.")
             parser.add_argument('-t', '--timestamp', action='store_true',
                                 help='Disables display of start/finish times and originating IP to the output')
-            parser.add_argument('-p', '--proxy', type=str, action='store',
+            parser.add_argument('-x', '--proxy', type=str, action='store',
                                 help='Proxies all requests using the provided URI matching the scheme:  '
                                      'http(s)://user:pass@10.10.10.10:8000')
             parser.add_argument('-c', '--cert', type=str, action='store',
