@@ -1,4 +1,4 @@
-**# Changelog**
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -8,8 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 
 
-**## 1.0.0-beta 2020-09-08**
+## 1.0.0 2020-09-08
 
-**-** Add support for project-level searches with the `-p` arg.  Note that this is a breaking change for previous versions as the `-p` argument was reassigned from proxy argument.  The proxy argument can now be assigned with `-x`.
-
-**-** Add support for job log searches.
+- Add support for project-level searches with the `-p` arg.  Note that this is a breaking change for previous versions as the `-p` argument was reassigned from proxy argument.  The proxy argument can now be assigned with `-x`.
+- Add support for job log searches.
