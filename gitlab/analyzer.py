@@ -40,7 +40,7 @@ def analyze():
             if not project_details:
                 warning("[!] %s project not found, skipping", item)
                 continue
-            target_projects.update(project_details)
+            target_projects.update({project_details['id']: project_details['http_url_to_repo']})
 
         if args.members:
             if args.group:
