@@ -13,27 +13,48 @@ def analyze():
     all_merge_requests = []
     all_mr_comments = []
     all_job_logs = []
+    all_members = []
+    target_projects = {}
+    group_projects = {}
+    group_details = {}
     personal_projects = {}
     all_snippets = {}
     args = types.Arguments()
 
-    for group in args.group:
-        group_details = groups.get(group)
-        if group_details is False:
-            warning("[!] %s not found, skipping", group)
-            continue
+    if args.group:
+        iterator = args.group
+    else:
+        iterator = args.project
 
-        group_projects = projects.all_group_projects(group)
+    for item in iterator:
+        if args.group:
+            group_details = groups.get(item)
+            if not group_details:
+                warning("[!] %s group not found, skipping", item)
+                continue
+
+            group_projects = projects.all_group_projects(item)
+
+        if args.project:
+            project_details = projects.project_details(item)
+            if not project_details:
+                warning("[!] %s project not found, skipping", item)
+                continue
+            target_projects.update({project_details['id']: project_details['http_url_to_repo']})
 
         if args.members:
-            all_members = members.get_all(group)
+            if args.group:
+                all_members = members.get_all_group_members(item)
+            else:
+                all_members = members.get_all_project_members(item)
             for member in all_members:
                 personal_projects.update(projects.all_member_projects(member))
 
-        all_projects = {**group_projects, **personal_projects}
+        all_projects = {**group_projects, **personal_projects, **target_projects}
 
-        log_group(group_details)
-        log_group_projects(group_projects)
+        if args.group:
+            log_group(group_details)
+            log_group_projects(group_projects)
 
         if args.members:
             log_members(all_members)
@@ -179,7 +200,8 @@ def log_related_jobs(all_job_logs, all_projects):
 
 
 def log_group(group_details):
-    info("GROUP: %s (%s)", group_details['name'], group_details['web_url'])
+    if len(group_details) > 0:
+        info("GROUP: %s (%s)", group_details['name'], group_details['web_url'])
 
 
 def log_group_projects(group_projects):

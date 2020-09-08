@@ -5,11 +5,22 @@ from utilities import validate, types
 gitlab = gitlab.GitLab(types.Arguments().url)
 
 
-def get_all(group):
+def get_all_project_members(project):
+    members = {}
+    info("[*] Fetching all members for project %s", project)
+    details = gitlab.get_project_members(project)
+    if validate.api_result(details):
+        info("[*] Found %s members for project %s", len(details), project)
+        for item in details:
+            members.update({item['username']: item['web_url']})
+    return members
+
+
+def get_all_group_members(group):
     members = {}
 
     info("[*] Fetching all members for group %s", group)
-    details = gitlab.get_members(group)
+    details = gitlab.get_group_members(group)
     if validate.api_result(details):
         info("[*] Found %s members for group %s", len(details), group)
         for item in details:

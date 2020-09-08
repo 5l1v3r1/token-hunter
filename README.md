@@ -31,14 +31,20 @@ pip3 install -r ./requirements.txt
 Then, you can run the tool and specify your options as follows:
 
 ```
-usage: token-hunter.py [-h] -g GROUP [-u URL] [-m] [-s] [-i] [-r] [-j] [-t]
-                       [-p PROXY] [-c CERT] [-l LOGFILE]
+usage: token-hunter.py [-h] (-g GROUP | -p PROJECT) [-u URL] [-m] [-s] [-i]
+                       [-r] [-j] [-t] [-x PROXY] [-c CERT] [-l LOGFILE]
 
 Collect OSINT for GitLab groups and, optionally, members. Search repository
 assets for sensitive data.
 
 optional arguments:
   -h, --help            show this help message and exit
+  -g GROUP, --group GROUP
+                        ID or HTML encoded name of a GitLab group. This
+                        option, by itself, will display group projects only.
+  -p PROJECT, --project PROJECT
+                        ID or HTML encoded name of a GitLab project. This
+                        option, by itself, will display project details only.
   -u URL, --url URL     An optional argument to specify the base URL of your
                         GitLab instance. If the argument is not supplied, its
                         defaulted to 'https://gitlab.com'
@@ -54,7 +60,7 @@ optional arguments:
                         sensitive data.
   -t, --timestamp       Disables display of start/finish times and originating
                         IP to the output
-  -p PROXY, --proxy PROXY
+  -x PROXY, --proxy PROXY
                         Proxies all requests using the provided URI matching
                         the scheme: http(s)://user:pass@10.10.10.10:8000
   -c CERT, --cert CERT  Used in tandem with -p (--proxy), this switch provides
@@ -64,18 +70,17 @@ optional arguments:
                         /Users/<username>/owasp_zap_root_ca.cer.
   -l LOGFILE, --logfile LOGFILE
                         Will APPEND all output to specified file.
-
-required arguments:
-  -g GROUP, --group GROUP
-                        ID or HTML encoded name of a GitLab group. This
-                        option, by itself, will display group projects only.
 ```
 
 # Usage Examples
 
 `./token-hunter.py -g 123456`
 
-The simplest use case is to return all the project URLs associated with a group by providing the group ID with the `-g` switch.  You can find the group ID underneath the group name in the GitLab UI.  No token searches are performed with this configuration.
+One of the simplest use cases is to return all the project URLs associated with a group by providing the group ID with the `-g` switch.  You can find the group ID underneath the group name in the GitLab UI.  No token searches are performed with this configuration.
+
+`./token-hunter.py -p 234567 -j`
+
+Another simple use case is to search all job logs for a specific project with the `-p` switch.  You can find the project ID underneath the project name in the GitLab UI.
 
 `./token-hunter.py -g 123456 -m`
 

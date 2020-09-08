@@ -14,10 +14,13 @@ class Arguments:
             parser = argparse.ArgumentParser(
                 description="Collect OSINT for GitLab groups and, optionally, members.  Search repository assets for "
                             "sensitive data.")
-            required_named = parser.add_argument_group('required arguments')
-            required_named.add_argument('-g', '--group', type=str, action='append', required=True,
+            required_args = parser.add_mutually_exclusive_group(required=True)
+            required_args.add_argument('-g', '--group', type=str, action='append',
                                         help="ID or HTML encoded name of a GitLab group.  This option, by itself, "
                                              "will display group projects only.")
+            required_args.add_argument('-p', '--project', type=str, action='append',
+                                        help="ID or HTML encoded name of a GitLab project.  This option, by itself, "
+                                             "will display project details only.")
             parser.add_argument('-u', '--url', default='https://gitlab.com',
                                 help="An optional argument to specify the base URL of your GitLab instance.  If the "
                                      "argument is not supplied, its defaulted to 'https://gitlab.com'")
@@ -36,7 +39,7 @@ class Arguments:
                                 help="Searches each projects public CI job logs for sensitive data.")
             parser.add_argument('-t', '--timestamp', action='store_true',
                                 help='Disables display of start/finish times and originating IP to the output')
-            parser.add_argument('-p', '--proxy', type=str, action='store',
+            parser.add_argument('-x', '--proxy', type=str, action='store',
                                 help='Proxies all requests using the provided URI matching the scheme:  '
                                      'http(s)://user:pass@10.10.10.10:8000')
             parser.add_argument('-c', '--cert', type=str, action='store',

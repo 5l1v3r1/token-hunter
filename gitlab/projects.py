@@ -5,6 +5,14 @@ from utilities import validate, types
 gitlab = gitlab.GitLab(types.Arguments().url)
 
 
+def project_details(project):
+    info("[*] Fetching project details for %s", project)
+    details = gitlab.get_project_details(project)
+    if validate.api_result(details):
+        info("[*] Found project with name %s", details['name'])
+        return details
+
+
 def all_group_projects(group):
     group_projects = {}
 
