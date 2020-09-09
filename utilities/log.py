@@ -8,7 +8,7 @@ args = types.Arguments()
 
 
 def configure():
-    coloredlogs.install()
+    coloredlogs.install(level='INFO')
     logging.basicConfig(format='%(message)s', level=logging.INFO, stream=sys.stdout)
     logfile = args.logfile
     if logfile:
