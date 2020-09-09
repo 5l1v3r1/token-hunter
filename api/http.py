@@ -13,7 +13,7 @@ class Http:
     @retry(requests.exceptions.ConnectionError or requests.exceptions.Timeout, delay=constants.Requests.retry_delay(),
            backoff=constants.Requests.retry_backoff(), tries=constants.Requests.retry_max_tries())
     def __get__(self, url):
-        response = self.session.get(url, timeout=60)
+        response = self.session.get(url, timeout=10)
         # rate limiting headers do not exist for all responses (i.e. cached responses)
         observed_header = "ratelimit-observed"
         limit_header = "ratelimit-limit"
