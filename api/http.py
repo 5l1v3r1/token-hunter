@@ -1,7 +1,7 @@
 import re
 import requests
 from retry import retry
-from logging import warning, info
+from logging import error, info
 from utilities import constants
 
 
@@ -13,7 +13,7 @@ class Http:
     @retry(requests.exceptions.ConnectionError or requests.exceptions.Timeout, delay=constants.Requests.retry_delay(),
            backoff=constants.Requests.retry_backoff(), tries=constants.Requests.retry_max_tries())
     def __get__(self, url):
-        response = self.session.get(url, timeout=10)
+        response = self.session.get(url, timeout=60)
         # rate limiting headers do not exist for all responses (i.e. cached responses)
         observed_header = "ratelimit-observed"
         limit_header = "ratelimit-limit"
@@ -31,7 +31,7 @@ class Http:
 
     def get_with_retry_and_paging_adjustment(self, url):
         def log_or_raise_error(error_type, current_page_size, current_url):
-            warning(f"[!] {error_type}:  request failed. Adjusting page size to {current_page_size} for GET on {current_url}")
+            error(f"[!] {error_type}:  request failed. Adjusting page size to {current_page_size} for GET on {current_url}")
             if page_size <= 1:
                 raise e
         for page_size in [20, 10, 5, 1]:
@@ -44,6 +44,8 @@ class Http:
             except requests.exceptions.Timeout as e:
                 log_or_raise_error("Timeout", page_size, url)
                 continue
+            except requests.exceptions.RequestException as e:
+                error("[!] RequestException (%s): Skipping %s", e.response.status, url)
             return response
 
     @staticmethod
