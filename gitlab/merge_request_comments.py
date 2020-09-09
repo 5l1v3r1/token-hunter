@@ -1,6 +1,6 @@
 from api import gitlab
 from utilities import validate, types
-from logging import info
+from logging import warning
 
 gitlab = gitlab.GitLab(types.Arguments().url)
 
@@ -17,7 +17,7 @@ def get_all(project_id, mr_id, mr_web_url):
                 comments.append(types.Comment('merge_request', mr_web_url, note['body']))
                 legit_comments += 1
         if legit_comments > 0:
-            info("[*] Found %s comments for merge request %s", legit_comments, mr_web_url)
+            warning("[*] Found %s comments for merge request %s", legit_comments, mr_web_url)
     return comments
 
 

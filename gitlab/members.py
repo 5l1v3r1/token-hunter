@@ -1,4 +1,4 @@
-from logging import info
+from logging import info, warning
 from api import gitlab
 from utilities import validate, types
 
@@ -10,7 +10,7 @@ def get_all_project_members(project):
     info("[*] Fetching all members for project %s", project)
     details = gitlab.get_project_members(project)
     if validate.api_result(details):
-        info("[*] Found %s members for project %s", len(details), project)
+        warning("[*] Found %s members for project %s", len(details), project)
         for item in details:
             members.update({item['username']: item['web_url']})
     return members
@@ -22,7 +22,7 @@ def get_all_group_members(group):
     info("[*] Fetching all members for group %s", group)
     details = gitlab.get_group_members(group)
     if validate.api_result(details):
-        info("[*] Found %s members for group %s", len(details), group)
+        warning("[*] Found %s members for group %s", len(details), group)
         for item in details:
             members.update({item['username']: item['web_url']})
 
