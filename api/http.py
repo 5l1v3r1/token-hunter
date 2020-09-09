@@ -18,8 +18,8 @@ class Http:
         observed_header = "ratelimit-observed"
         limit_header = "ratelimit-limit"
         if observed_header and limit_header in response.headers.keys():
-            self.log_rate_limit_info(response.headers[observed_header],
-                                     response.headers[limit_header])
+            self.__log_rate_limit_info__(response.headers[observed_header],
+                                         response.headers[limit_header])
 
         return response
 
@@ -47,6 +47,6 @@ class Http:
             return response
 
     @staticmethod
-    def log_rate_limit_info(observed, limit):
+    def __log_rate_limit_info__(observed, limit):
         if (int(observed)/int(limit)) >= .9:
             info("[*] Rate Limit Usage: (%s/%s)", observed, limit)
