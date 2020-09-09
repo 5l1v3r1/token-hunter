@@ -1,4 +1,4 @@
-from logging import warning
+from logging import warning, error
 
 import os
 import re
@@ -107,6 +107,7 @@ class GitLab:
 
         if not (response and response.status_code == 200):
             # If code not 200, no results to process
+            error("[!] Response %s received from %s.  Skipping.", response.status_code, url)
             return False
         # The "Link" header is returned when there is more than one page of
         # results. GitLab asks that we use this link instead of crafting
@@ -125,6 +126,6 @@ class GitLab:
             if response.status_code == 200:
                 all_results += response.json()
             else:
-                warning("[!] Error (%s) processing pagination URL: %s", response.status_code, next_url)
+                warning("[!] Response %s processing pagination URL: %s", response.status_code, next_url)
         # Return the collective results
         return all_results
