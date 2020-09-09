@@ -13,7 +13,7 @@ class Http:
     @retry(requests.exceptions.ConnectionError, delay=constants.Requests.retry_delay(),
            backoff=constants.Requests.retry_backoff(), tries=constants.Requests.retry_max_tries())
     def __get__(self, url):
-        response = self.session.get(url)
+        response = self.session.get(url, timeout=60)
         # rate limiting headers do not exist for all responses
         if "RateLimit-Observed" and "RateLimit-Limit" and "RateLimit-ResetTime" in response.headers.keys():
             self.log_rate_limit_info(response.headers["RateLimit-Observed"],
