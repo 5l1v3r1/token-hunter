@@ -1,11 +1,14 @@
 import logging
 import sys
+import coloredlogs
+
 from utilities import types
 
 args = types.Arguments()
 
 
 def configure():
+    coloredlogs.install()
     logging.basicConfig(format='%(message)s', level=logging.INFO, stream=sys.stdout)
     logfile = args.logfile
     if logfile:
