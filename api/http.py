@@ -1,7 +1,7 @@
 import re
 import requests
 from retry import retry
-from logging import error, warning
+from logging import warning, info
 from utilities import constants
 
 
@@ -15,10 +15,12 @@ class Http:
     def __get__(self, url):
         response = self.session.get(url, timeout=60)
         # rate limiting headers do not exist for all responses
-        if "RateLimit-Observed" and "RateLimit-Limit" and "RateLimit-ResetTime" in response.headers.keys():
-            self.log_rate_limit_info(response.headers["RateLimit-Observed"],
-                                     response.headers["RateLimit-Limit"],
-                                     response.headers["RateLimit-ResetTime"])
+        observed_header = "ratelimit-observed"
+        limit_header = "ratelimit-limit"
+        if observed_header and limit_header in response.headers.keys():
+            self.log_rate_limit_info(response.headers[observed_header],
+                                     response.headers[limit_header])
+
         return response
 
     @staticmethod
@@ -45,6 +47,6 @@ class Http:
             return response
 
     @staticmethod
-    def log_rate_limit_info(observed, limit, reset_time):
-        if int(observed) == int(limit):
-            warning(f"[!] Rate limit observed ({observed}/{limit})!  Reset time: {reset_time}.")
+    def log_rate_limit_info(observed, limit):
+        if (int(observed)/int(limit)) >= .9:
+            info("[*] Rate Limit Usage: (%s/%s)", observed, limit)
