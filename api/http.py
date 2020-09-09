@@ -28,14 +28,19 @@ class Http:
         return re.sub(r'per_page=?\d{1,2}', f"per_page={page_size}", original_url)
 
     def get_with_retry_and_paging_adjustment(self, url):
+        def log_or_raise_error(error_type, current_page_size, current_url):
+            warning(f"[!] {error_type}:  request failed. Adjusting page size to {current_page_size} for GET on {current_url}")
+            if page_size <= 1:
+                raise e
         for page_size in [20, 10, 5, 1]:
             url = Http.__adjust_paging__(url, page_size)
             try:
                 response = self.__get__(url)
             except requests.exceptions.ConnectionError as e:
-                warning(f"[!] ConnectionError:  retries failed, adjusting page size to {page_size} : {url}")
-                if page_size <= 1:
-                    raise e
+                log_or_raise_error("ConnectionError", page_size, url)
+                continue
+            except requests.exceptions.Timeout as e:
+                log_or_raise_error("Timeout", page_size, url)
                 continue
             return response
 
