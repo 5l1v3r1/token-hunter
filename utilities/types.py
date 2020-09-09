@@ -58,7 +58,7 @@ class Arguments:
             self.parsed_args = parser.parse_args()
             if self.parsed_args.proxy and not self.parsed_args.cert:
                 parser.error('If you specify a proxy address, you must also specify a dynamic certificate in order to '
-                             'decrypt TLS traffic with the --verify-tls switch.')
+                             'decrypt TLS traffic with the --cert switch.')
 
     instance = None
 
