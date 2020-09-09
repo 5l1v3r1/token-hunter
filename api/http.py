@@ -10,11 +10,11 @@ class Http:
     def __init__(self, session_builder):
         self.session = session_builder()
 
-    @retry(requests.exceptions.ConnectionError, delay=constants.Requests.retry_delay(),
+    @retry(requests.exceptions.ConnectionError or requests.exceptions.Timeout, delay=constants.Requests.retry_delay(),
            backoff=constants.Requests.retry_backoff(), tries=constants.Requests.retry_max_tries())
     def __get__(self, url):
         response = self.session.get(url, timeout=60)
-        # rate limiting headers do not exist for all responses
+        # rate limiting headers do not exist for all responses (i.e. cached responses)
         observed_header = "ratelimit-observed"
         limit_header = "ratelimit-limit"
         if observed_header and limit_header in response.headers.keys():
