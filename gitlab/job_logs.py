@@ -8,6 +8,7 @@ args = types.Arguments()
 
 def get_all(project_id, project_url):
     job_logs = []
+    info("[*] Retrieving job stats for project %s", project_url)
     jobs = gitlab.get_jobs(project_id)
     if validate.api_result(jobs):
         limit = args.depth
