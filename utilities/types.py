@@ -37,6 +37,8 @@ class Arguments:
                                      "sensitive data.")
             parser.add_argument('-j', '--jobs', action='store_true',
                                 help="Searches each projects public CI job logs for sensitive data.")
+            parser.add_argument('-d', '--depth', type=int, default=100,
+                                help="Used in tandem with -j (--jobs).  Defaults to 100 of the most recent jobs.")
             parser.add_argument('-t', '--timestamp', action='store_true',
                                 help='Disables display of start/finish times and originating IP to the output')
             parser.add_argument('-x', '--proxy', type=str, action='store',
