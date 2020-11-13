@@ -1,9 +1,19 @@
-image: "python:latest"
-
+# You can override the included template(s) by including variable overrides
+# See https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#priority-of-environment-variables
+image: python:latest
 before_script:
-  - apt-get update -qq
-  - pip3 install -r ./requirements.txt
-
+- apt-get update -qq
+- pip3 install -r ./requirements.txt
 test:
   script:
-    - pytest -v
+  - pytest -v
+stages:
+- test
+sast:
+  variables:
+    SAST_DEFAULT_ANALYZERS: bandit
+  stage: test
+include:
+- template: Security/SAST.gitlab-ci.yml
